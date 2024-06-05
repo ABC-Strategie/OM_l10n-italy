@@ -288,7 +288,8 @@ class MigrateL10nItDdt(EasyCommand):
                 "type_id": self._document_types[record.ddt_type_id].id,
                 "date": record.date,
                 "carrier_id": record.carrier_id.id,
-                "delivery_method_id": record.partner_id.property_delivery_carrier_id.id,
+                "delivery_method_id": record.picking_ids.mapped("carrier_id")[:1].id
+                or record.partner_id.property_delivery_carrier_id.id,
                 "transport_datetime": record.date_done,
                 "packages": record.parcels,
                 "volume": record.volume,
@@ -323,6 +324,14 @@ class MigrateL10nItDdt(EasyCommand):
 
         documents = Document.search([], order="id ASC")
         for document in documents:
+            # align dn_supplier_number and dn_supplier_date fields in picking
+            for picking in document.picking_ids:
+                picking.write(
+                    {
+                        "dn_supplier_number": picking.ddt_supplier_number,
+                        "dn_supplier_date": picking.ddt_supplier_date,
+                    }
+                )
             delivery_note = DeliveryNote.create(vals_getter(document))
             extra_lines = document.line_ids.filtered(lambda l: not l.move_id)
 

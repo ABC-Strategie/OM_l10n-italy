@@ -1,7 +1,7 @@
 # Copyright 2019 Simone Rubino - Agile Business Group
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from dateutil.relativedelta import relativedelta
 
@@ -44,6 +44,7 @@ class AccountIntrastatStatement(models.Model):
     _name = "account.intrastat.statement"
     _description = "Intrastat Statement"
     _rec_name = "number"
+    _order = "date desc"
 
     def round_min_amount(self, amount, company=None, prec_digits=None, truncate=False):
         """
@@ -449,7 +450,7 @@ class AccountIntrastatStatement(models.Model):
             month = self.period_number
             period_date_start = date(year, month, 1)
             period_date_stop = (
-                datetime(year, month, 1) + relativedelta(months=1) - timedelta(days=1)
+                period_date_start + relativedelta(months=1) - timedelta(days=1)
             )
         elif self.period_type == "T":
             quarter = self.period_number
@@ -768,8 +769,8 @@ class AccountIntrastatStatement(models.Model):
 
         # Search intrastat lines
         domain = [
-            ("invoice_date", ">=", period_date_start),
-            ("invoice_date", "<=", period_date_stop),
+            ("date", ">=", period_date_start),
+            ("date", "<=", period_date_stop),
             ("intrastat", "=", True),
         ]
         inv_type = []
@@ -779,33 +780,31 @@ class AccountIntrastatStatement(models.Model):
             inv_type += ["in_invoice", "in_refund"]
         domain.append(("move_type", "in", inv_type))
 
-        statement_data = dict()
+        statement_data = {}
+        section_field_reverse = {}
+        for section_type in ["purchase", "sale"]:
+            for section_number in range(1, 5):
+                statement_section_field = self.get_section_field_name(
+                    section_type, section_number
+                )
+                statement_data[statement_section_field] = list()
+                section_field_reverse["{}_s{}".format(section_type, section_number)] = (
+                    section_type,
+                    section_number,
+                )
+
         invoices = self.env["account.move"].search(domain)
 
         for inv_intra_line in invoices.mapped("intrastat_line_ids"):
-            for section_type in ["purchase", "sale"]:
-                for section_number in range(1, 5):
-                    section_details = (section_type, section_number)
-                    statement_section = "%s_s%s" % section_details
-                    if inv_intra_line.statement_section != statement_section:
-                        continue
-                    statement_section_model_name = self.get_section_model(
-                        *section_details
-                    )
-                    st_line = self.env[
-                        statement_section_model_name
-                    ]._prepare_statement_line(inv_intra_line, self)
-                    if not st_line:
-                        continue
-                    statement_section_field = self.get_section_field_name(
-                        *section_details
-                    )
-                    if statement_section_field not in statement_data:
-                        statement_data[statement_section_field] = list()
-                    st_line["sequence"] = (
-                        len(statement_data[statement_section_field]) + 1
-                    )
-                    statement_data[statement_section_field].append((0, 0, st_line))
+            section_details = section_field_reverse[inv_intra_line.statement_section]
+            statement_section_model_name = self.get_section_model(*section_details)
+            st_line = self.env[statement_section_model_name]._prepare_statement_line(
+                inv_intra_line, self
+            )
+            if st_line:
+                statement_section_field = self.get_section_field_name(*section_details)
+                st_line["sequence"] = len(statement_data[statement_section_field]) + 1
+                statement_data[statement_section_field].append((0, 0, st_line))
 
         self.write(statement_data)
         # Group refund to sale lines if they have the same period of ref
@@ -819,11 +818,22 @@ class AccountIntrastatStatement(models.Model):
                 refund_section_details = (section_type, refund_section_number)
                 section_field = self.get_section_field_name(*section_details)
                 for line in self[section_field]:
-                    refund_section_model = self.get_section_model(
-                        *refund_section_details
-                    )
-                    to_refund_model = self.env[refund_section_model]
-                    self.refund_line(line, to_refund_model)
+                    # Compensation can happen only if the credit note has been issued
+                    # for invoices belonging the considered period. Here we check
+                    # if the reversed entry of the Sale/Purchase section 2 line
+                    # respect this constraint otherwise no compensation should
+                    # happen
+                    refund_date = line.invoice_id.reversed_entry_id.invoice_date
+                    if (
+                        refund_date
+                        and period_date_start <= refund_date <= period_date_stop
+                    ):
+                        refund_section_model = self.get_section_model(
+                            *refund_section_details
+                        )
+                        to_refund_model = self.env[refund_section_model]
+                        self.refund_line(line, to_refund_model)
+        self.recompute_sequence_lines()
         return True
 
     @staticmethod

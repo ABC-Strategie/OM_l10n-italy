@@ -10,8 +10,13 @@
         <field name="model">stock.picking</field>
         <field name="inherit_id" ref="stock.view_picking_form" />
         <field name="arch" type="xml">
-            <xpath expr="//form/sheet" position="before">
-                <field name="picking_type_code" invisible="True" />
+            <xpath
+                expr="//form/sheet/group/group/div[hasclass('o_td_label')]"
+                position="attributes"
+            >
+                <attribute
+                    name="attrs"
+                >{'required': [('picking_type_code', '!=', 'internal')], 'invisible': [('picking_type_code', '=', 'internal')]}</attribute>
             </xpath>
             <xpath
                 expr="//form/sheet/group/group/field[@name='partner_id']"
@@ -204,7 +209,6 @@
                                     <field
                                         name="delivery_note_carrier_id"
                                         attrs="{'readonly': [('delivery_note_readonly', '=', True)]}"
-                                        domain="[('is_carrier','=', True)]"
                                         string="Carrier"
                                     />
                                     <field
@@ -320,6 +324,14 @@
                                 </group>
                             </group>
                             <group
+                                attrs="{'invisible': [('picking_type_code', '!=', 'incoming')]}"
+                            >
+                                <group>
+                                    <field name="dn_supplier_number" />
+                                    <field name="dn_supplier_date" />
+                                </group>
+                            </group>
+                            <group
                                 string="Delivery Notes"
                                 attrs="{'invisible': [('delivery_note_exists', '=', False)]}"
                             >
@@ -352,9 +364,12 @@
                     aria-label="Go to delivery note"
                     title="Go to delivery note"
                 />
-                <field name="delivery_note_id" />
-                <field name="delivery_note_state" />
-                <field name="delivery_note_date" />
+                <field name="delivery_note_id" optional="show" />
+                <field name="delivery_note_state" optional="show" />
+                <field name="delivery_note_date" optional="show" />
+            </field>
+            <field name="partner_id" position="after">
+                <field name="carrier_id" string="Delivery Method" />
             </field>
         </field>
     </record>
@@ -381,7 +396,20 @@
                     name="validated_delivery_note"
                     domain="[('delivery_note_state', '=', 'confirm')]"
                 />
+                <field name="dn_supplier_number" />
             </xpath>
+            <group position="inside">
+                <filter
+                    name="delivery_note_state"
+                    domain="[]"
+                    context="{'group_by': 'delivery_note_state'}"
+                />
+                <filter
+                    name="delivery_note_date"
+                    domain="[]"
+                    context="{'group_by': 'delivery_note_date'}"
+                />
+            </group>
         </field>
     </record>
 

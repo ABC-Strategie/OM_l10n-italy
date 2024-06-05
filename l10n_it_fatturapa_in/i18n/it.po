@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-09-27 08:07+0000\n"
-"PO-Revision-Date: 2023-10-28 15:51+0000\n"
+"PO-Revision-Date: 2024-05-28 09:37+0000\n"
 "Last-Translator: mymage <stefano.consolaro@mymage.it>\n"
 "Language-Team: \n"
 "Language: it\n"
@@ -616,12 +616,6 @@ msgid "File Size"
 msgstr "Dimensione file"
 
 #. module: l10n_it_fatturapa_in
-#: code:addons/l10n_it_fatturapa_in/wizard/wizard_import_fatturapa.py:0
-#, python-format
-msgid "File is linked to bills yet."
-msgstr "Il file è già collegato a delle fatture."
-
-#. module: l10n_it_fatturapa_in
 #: model:ir.model.fields,field_description:l10n_it_fatturapa_in.field_fatturapa_attachment_in__message_follower_ids
 msgid "Followers"
 msgstr "Seguito da"
@@ -973,7 +967,7 @@ msgstr "Natura"
 #: code:addons/l10n_it_fatturapa_in/wizard/efattura.py:0
 #, python-format
 msgid "No available data to compute AliquotaIVA"
-msgstr "Data non disponibile per il calcolo dell'aliquota IVA"
+msgstr "Dati non disponibili per il calcolo dell'aliquota IVA"
 
 #. module: l10n_it_fatturapa_in
 #: code:addons/l10n_it_fatturapa_in/wizard/wizard_import_fatturapa.py:0
@@ -1628,6 +1622,10 @@ msgstr ""
 #, python-format
 msgid "You can select only one XML file to link."
 msgstr "È possibile selezionare solo un file XML da collegare."
+
+#, python-format
+#~ msgid "File is linked to bills yet."
+#~ msgstr "Il file è già collegato a delle fatture."
 
 #~ msgid "SMS Delivery error"
 #~ msgstr "Errore consegna SMS"

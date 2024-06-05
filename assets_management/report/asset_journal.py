@@ -1,5 +1,6 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
 # Copyright 2019 Openforce Srls Unipersonale (www.openforce.it)
+# Copyright 2022 Simone Rubino - TAKOBI
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from collections import OrderedDict
@@ -164,7 +165,7 @@ class Report(models.TransientModel):
             dep_lines = dep_lines.filtered(lambda dl: dl.date <= self.date)
         categories = assets.mapped("category_id")
 
-        if not (categories and assets and deps and dep_lines):
+        if not (categories and assets and deps):
             raise ValidationError(
                 _("There is nothing to print according to current settings!")
             )
@@ -346,8 +347,16 @@ class ReportCategory(models.TransientModel):
                 t: {fname: 0 for fname in fnames}
                 for t in report_deps.mapped("depreciation_id.type_id")
             }
-            for report_dep in report_deps.filtered("report_depreciation_year_line_ids"):
+            for report_dep in report_deps:
                 dep_type = report_dep.depreciation_id.type_id
+                if not report_dep.report_depreciation_year_line_ids:
+                    totals_by_dep_type[dep_type][
+                        "amount_depreciable_updated"
+                    ] += report_dep.dep_amount_depreciable
+                    totals_by_dep_type[dep_type][
+                        "amount_residual"
+                    ] += report_dep.dep_amount_depreciable
+                    continue
                 last_line = report_dep.report_depreciation_year_line_ids[-1]
                 line_curr = last_line.get_currency()
                 fy_start = last_line.fiscal_year_id.date_from
@@ -357,6 +366,13 @@ class ReportCategory(models.TransientModel):
                         if fy_start <= report_date <= fy_end:
                             totals_by_dep_type[dep_type][fname] += line_curr._convert(
                                 last_line[fname],
+                                curr,
+                                categ.report_id.company_id,
+                                report_date,
+                            )
+                        elif fy_end < report_date:
+                            totals_by_dep_type[dep_type][fname] += line_curr._convert(
+                                last_line["amount_depreciation_fund_curr_year"],
                                 curr,
                                 categ.report_id.company_id,
                                 report_date,

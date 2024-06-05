@@ -130,7 +130,10 @@ class AccountMove(models.Model):
         is_zero = self.currency_id.is_zero
         for move_line in self.line_ids:
             field_value = getattr(move_line, line_field)
-            if not is_zero(field_value):
+            if not is_zero(field_value) and move_line.account_internal_type in (
+                "receivable",
+                "payable",
+            ):
                 break
         else:
             raise UserError(
@@ -340,7 +343,7 @@ class AccountMove(models.Model):
                 )
 
             rc_lines_to_rec = line_to_reconcile | payment_line_to_reconcile
-            rc_lines_to_rec.reconcile()
+            rc_lines_to_rec.with_context(no_exchange_difference=True).reconcile()
 
     def _reconcile_rc_invoice_payment(self, rc_invoice, rc_payment):
         """Reconcile the RC Payment."""
