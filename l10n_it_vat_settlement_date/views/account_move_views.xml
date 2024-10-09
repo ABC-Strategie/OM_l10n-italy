@@ -11,7 +11,7 @@
         <field name="inherit_id" ref="account.view_move_form" />
         <field name="arch" type="xml">
             <field name="invoice_date" position="after">
-                <field
+<!--                 <field
                     name="l10n_it_vat_settlement_date"
                     attrs="{
                         'invisible': [
@@ -28,7 +28,7 @@
                             'warn_future': true,
                         },
                     }"
-                />
+                /> -->
             </field>
         </field>
     </record>
