@@ -5,12 +5,6 @@
         <field name="model">account.journal</field>
         <field name="inherit_id" ref="account.view_account_journal_form" />
         <field name="arch" type="xml">
-            <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][1]/field[@name='inbound_payment_method_line_ids']/tree[1]/field[@name='name']" position="after">
-                <field name="code" optional="show" attrs="{}" invisible="1"/>
-            </xpath>
-            <xpath expr="//form[1]/sheet[1]/notebook[1]/page[not(@name)][2]/field[@name='outbound_payment_method_line_ids']/tree[1]/field[@name='payment_method_id']" position="after">
-                <field name="code" optional="show" attrs="{}" invisible="1"/>
-            </xpath>
             <field name="company_id" position="after">
                 <field name="tax_registry_id" />
             </field>
