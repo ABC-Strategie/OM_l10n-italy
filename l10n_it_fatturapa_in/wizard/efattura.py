@@ -24,6 +24,15 @@ _root = fpa_schema_etree()
 date_types = {}
 datetime_types = {}
 
+_collected = False
+
+def init_schema_types():
+    global _collected
+    if not _collected:
+        collect_types()
+        _collected = True
+
+
 
 def get_parent_element(e):
     for ancestor in e.iterancestors():
@@ -136,6 +145,7 @@ def _fix_xmlstring(xml_string):
 
 def CreateFromDocument(xml_string):  # noqa: C901
     # il codice seguente rimpiazza fatturapa.CreateFromDocument(xml_string)
+    init_schema_types()  # Inizializzazione lazy dei tipi schema
     class ObjectDict(MutableMapping):
         def __getattr__(self, attr):
             try:
@@ -328,4 +338,4 @@ def CreateFromDocument(xml_string):  # noqa: C901
     return validat
 
 
-collect_types()
+#collect_types()
