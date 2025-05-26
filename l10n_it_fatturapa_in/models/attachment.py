@@ -151,6 +151,7 @@ class FatturaPAAttachmentIn(models.Model):
     def _compute_e_invoice_parsing_error(self):
         for att in self:
             if not att.datas:
+                att.e_invoice_parsing_error = False
                 return
             att.get_invoice_obj()
 
