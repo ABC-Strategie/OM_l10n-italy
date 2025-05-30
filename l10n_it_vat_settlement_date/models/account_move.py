@@ -19,7 +19,6 @@ class AccountMove(models.Model):
     date_vat_settlement = fields.Date(
         string="VAT Settlement Date EX",
         related = "l10n_it_vat_settlement_date",
-        store=True,
     )
 
     @api.depends(
