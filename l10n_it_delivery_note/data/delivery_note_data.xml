@@ -5,7 +5,7 @@
   -->
 <odoo noupdate="1">
     <!-- Conditions of transport -->
-    <record id="transport_condition_PF" model="stock.picking.transport.condition">
+<!--     <record id="transport_condition_PF" model="stock.picking.transport.condition">
         <field name="name">Carriage paid</field>
     </record>
     <record id="transport_condition_PA" model="stock.picking.transport.condition">
@@ -13,7 +13,7 @@
     </record>
     <record id="transport_condition_PAF" model="stock.picking.transport.condition">
         <field name="name">Charged in invoice</field>
-    </record>
+    </record> -->
 
     <!-- Goods appearance -->
     <record id="goods_appearance_CAR" model="stock.picking.goods.appearance">
