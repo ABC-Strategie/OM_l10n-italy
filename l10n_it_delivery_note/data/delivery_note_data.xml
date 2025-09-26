@@ -16,7 +16,8 @@
     </record>
 
     <!-- Goods appearance -->
-    <record id="goods_appearance_CAR" model="stock.picking.goods.appearance">
+    <!-- COMMENTATO PER RISOLVERE IL PROBLEMA DURANTE LA MIGRAZIONE -->
+    <!-- <record id="goods_appearance_CAR" model="stock.picking.goods.appearance">
         <field name="name">Box</field>
     </record>
     <record id="goods_appearance_BAN" model="stock.picking.goods.appearance">
@@ -27,7 +28,7 @@
     </record>
     <record id="goods_appearance_CBA" model="stock.picking.goods.appearance">
         <field name="name">Box / Pallet</field>
-    </record>
+    </record> -->
 
     <!-- Reasons of transport -->
     <record id="transport_reason_VEN" model="stock.picking.transport.reason">
