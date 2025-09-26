@@ -31,6 +31,7 @@
     </record> -->
 
     <!-- Reasons of transport -->
+    <!-- COMMENTATO PER RISOLVERE IL PROBLEMA DURANTE LA MIGRAZIONE
     <record id="transport_reason_VEN" model="stock.picking.transport.reason">
         <field name="name">Sale</field>
     </record>
@@ -39,7 +40,7 @@
     </record>
     <record id="transport_reason_RES" model="stock.picking.transport.reason">
         <field name="name">Returned</field>
-    </record>
+    </record> -->
 
     <!-- Methods of transport -->
     <!-- COMMENTATO PER RISOLVERE IL PROBLEMA DURANTE LA MIGRAZIONE
