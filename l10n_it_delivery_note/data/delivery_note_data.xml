@@ -16,7 +16,7 @@
     </record> -->
 
     <!-- Goods appearance -->
-    <record id="goods_appearance_CAR" model="stock.picking.goods.appearance">
+    <!-- <record id="goods_appearance_CAR" model="stock.picking.goods.appearance">
         <field name="name">Box</field>
     </record>
     <record id="goods_appearance_BAN" model="stock.picking.goods.appearance">
@@ -27,10 +27,10 @@
     </record>
     <record id="goods_appearance_CBA" model="stock.picking.goods.appearance">
         <field name="name">Box / Pallet</field>
-    </record>
+    </record> -->
 
     <!-- Reasons of transport -->
-    <record id="transport_reason_VEN" model="stock.picking.transport.reason">
+    <!-- <record id="transport_reason_VEN" model="stock.picking.transport.reason">
         <field name="name">Sale</field>
     </record>
     <record id="transport_reason_VIS" model="stock.picking.transport.reason">
@@ -38,10 +38,10 @@
     </record>
     <record id="transport_reason_RES" model="stock.picking.transport.reason">
         <field name="name">Returned</field>
-    </record>
+    </record> -->
 
     <!-- Methods of transport -->
-    <record id="transport_method_MIT" model="stock.picking.transport.method">
+    <!-- <record id="transport_method_MIT" model="stock.picking.transport.method">
         <field name="name">Sender</field>
     </record>
     <record id="transport_method_DES" model="stock.picking.transport.method">
@@ -49,5 +49,5 @@
     </record>
     <record id="transport_method_COR" model="stock.picking.transport.method">
         <field name="name">Carrier</field>
-    </record>
+    </record> -->
 </odoo>
