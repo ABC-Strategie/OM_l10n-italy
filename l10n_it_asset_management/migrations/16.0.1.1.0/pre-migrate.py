@@ -34,34 +34,40 @@
 #  Copyright 2024 ...
 #  License AGPL-3.0 or later.
 
+import logging
 from openupgradelib import openupgrade
 
-# mapping: (model, table, old_col, new_col)
+_logger = logging.getLogger(__name__)
+
+# (model, table, old_col, new_col)
 RENAMES = [
     ("asset.depreciation.mode.line", "asset_depreciation_mode_line", "from_nr", "from_year_nr"),
-    ("asset.depreciation.mode.line", "asset_depreciation_mode_line", "to_nr", "to_year_nr"),
+    ("asset.depreciation.mode.line", "asset_depreciation_mode_line", "to_nr",   "to_year_nr"),
 ]
-
-def _safe_rename(env):
-    cr = env.cr
-    for model, table, old, new in RENAMES:
-        new_exists = openupgrade.column_exists(cr, table, new)
-        old_exists = openupgrade.column_exists(cr, table, old)
-
-        # Se entrambe esistono, porta i dati sulla nuova e rimuovi la vecchia
-        if new_exists and old_exists:
-            openupgrade.logged_query(cr, f"""
-                UPDATE {table} SET {new} = COALESCE({new}, {old})
-            """)
-            openupgrade.logged_query(cr, f'ALTER TABLE "{table}" DROP COLUMN "{old}"')
-
-        # Se esiste solo la vecchia, fai il vero rename
-        elif (not new_exists) and old_exists:
-            openupgrade.rename_columns(cr, {table: [(old, new)]})
-
-        # In tutti i casi, sincronizza i metadati di Odoo (ir.model.fields)
-        openupgrade.rename_field(env, model, old, new)
 
 @openupgrade.migrate()
 def migrate(env, version):
-    _safe_rename(env)
+    cr = env.cr
+    fields_to_rename = []
+
+    for model, table, old, new in RENAMES:
+        old_exists = openupgrade.column_exists(cr, table, old)
+        new_exists = openupgrade.column_exists(cr, table, new)
+
+        # Caso richiesto: rinomina SOLO se esiste la vecchia e NON esiste la nuova
+        if old_exists and not new_exists:
+            _logger.info("Renaming column %s.%s -> %s", table, old, new)
+            openupgrade.rename_columns(cr, {table: [(old, new)]})
+            fields_to_rename.append((model, table, old, new))
+        else:
+            # Se la nuova esiste già (e la vecchia no), non facciamo nulla.
+            # Se non esiste né vecchia né nuova, non facciamo nulla.
+            # Se esistono entrambe (caso anomalo), non forziamo nulla (coerente con la tua richiesta).
+            _logger.info(
+                "Skip rename for %s.%s -> %s (old_exists=%s, new_exists=%s)",
+                table, old, new, old_exists, new_exists
+            )
+
+    # Allinea i metadati SOLO per i renames effettivamente fatti
+    if fields_to_rename:
+        openupgrade.rename_fields(env, fields_to_rename)
