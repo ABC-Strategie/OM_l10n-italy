@@ -7,6 +7,10 @@
 
 <!-- /!\ do not modify above this line -->
 
+#MOD PER MILITO
+#RIMOSSO FISCAL EPOS PRINT PER NON ANDARE IN CONFLITTO COL REPOSITORY DEDICATO
+
+
 # Odoo Italia Modules
 
 Addons concerning Odoo Italian Localization.
