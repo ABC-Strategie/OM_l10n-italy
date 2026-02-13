@@ -25,4 +25,4 @@ def pre_absorb_old_module(env):
             ],
             merge_modules=True,
         )
-        set_exclude_from_vat_settlements(env)
+        #set_exclude_from_vat_settlements(env)
