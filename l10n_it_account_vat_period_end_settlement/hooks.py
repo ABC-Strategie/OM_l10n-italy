@@ -26,3 +26,23 @@ def pre_absorb_old_module(env):
             merge_modules=True,
         )
         #set_exclude_from_vat_settlements(env)
+        _disable_view_by_xmlid(env, "l10n_it_vat_statement_communication.view_tax_vsc_form")
+
+def _disable_view_by_xmlid(env, xmlid: str):
+    """Disattiva una vista (ir.ui.view) se esiste, identificata da XMLID."""
+    if not xmlid or "." not in xmlid:
+        return
+    module, name = xmlid.split(".", 1)
+
+    env.cr.execute(
+        """
+        UPDATE ir_ui_view v
+        SET active = FALSE
+        FROM ir_model_data d
+        WHERE d.model = 'ir.ui.view'
+          AND d.res_id = v.id
+          AND d.module = %s
+          AND d.name = %s
+        """,
+        (module, name),
+    )
