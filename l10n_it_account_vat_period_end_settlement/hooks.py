@@ -27,6 +27,8 @@ def pre_absorb_old_module(env):
         )
         #set_exclude_from_vat_settlements(env)
         _disable_view_by_xmlid(env, "l10n_it_vat_statement_communication.view_tax_vsc_form")
+        _disable_view_by_xmlid(env, "studio_customization.odoo_studio_fatturap_37189039-d2c5-4187-b7be-814a1f91510b")
+
 
 def _disable_view_by_xmlid(env, xmlid: str):
     """Disattiva una vista (ir.ui.view) se esiste, identificata da XMLID."""
