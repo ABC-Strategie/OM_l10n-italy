@@ -14,11 +14,11 @@ def set_exclude_from_vat_settlements(env):
 
 
 def pre_absorb_old_module(env):
-    _detach_children(env, 3739)
-    _disable_view_by_xmlid(env, "l10n_it_vat_statement_communication.view_tax_vsc_form")
-    _disable_view_by_xmlid(env, "studio_customization.odoo_studio_fatturap_37189039-d2c5-4187-b7be-814a1f91510b")
-    _disable_view_by_xmlid(env, "abc_efatturazione.fatturapa_attachment_in_tree_date")
-    _disable_view_by_xmlid(env, "l10n_it_fatturapa_export_zip.view_fatturapa_in_attachment_tree")
+    _delete_children_of_view(env, 3739)
+    # _disable_view_by_xmlid(env, "l10n_it_vat_statement_communication.view_tax_vsc_form")
+    # _disable_view_by_xmlid(env, "studio_customization.odoo_studio_fatturap_37189039-d2c5-4187-b7be-814a1f91510b")
+    # _disable_view_by_xmlid(env, "abc_efatturazione.fatturapa_attachment_in_tree_date")
+    # _disable_view_by_xmlid(env, "l10n_it_fatturapa_export_zip.view_fatturapa_in_attachment_tree")
     if openupgrade.is_module_installed(env.cr, "account_vat_period_end_statement"):
         openupgrade.update_module_names(
             env.cr,
@@ -64,3 +64,8 @@ def _detach_children(env, parent_id: int):
         (parent_id,),
     )
 
+def _delete_children_of_view(env, parent_id: int):
+    env.cr.execute("""
+        DELETE FROM ir_ui_view
+        WHERE inherit_id = %s
+    """, (parent_id,))
