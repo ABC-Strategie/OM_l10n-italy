@@ -14,6 +14,7 @@ def set_exclude_from_vat_settlements(env):
 
 
 def pre_absorb_old_module(env):
+    _detach_children(env, 3739)
     _disable_view_by_xmlid(env, "l10n_it_vat_statement_communication.view_tax_vsc_form")
     _disable_view_by_xmlid(env, "studio_customization.odoo_studio_fatturap_37189039-d2c5-4187-b7be-814a1f91510b")
     _disable_view_by_xmlid(env, "abc_efatturazione.fatturapa_attachment_in_tree_date")
@@ -51,3 +52,15 @@ def _disable_view_by_xmlid(env, xmlid: str):
         """,
         (module, name),
     )
+def _detach_children(env, parent_id: int):
+    """Disattiva e stacca tutte le viste che ereditano parent_id (anche senza xmlid)."""
+    env.cr.execute(
+        """
+        UPDATE ir_ui_view
+        SET active = FALSE,
+            inherit_id = NULL
+        WHERE inherit_id = %s
+        """,
+        (parent_id,),
+    )
+
