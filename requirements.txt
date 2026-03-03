@@ -4,6 +4,6 @@ codicefiscale
 elementpath
 mock
 num2words>=0.5.12
-openupgradelib
+openupgradelib==3.12.0
 unidecode
 xmlschema
