@@ -20,6 +20,11 @@ class AccountMoveInherit(models.Model):
     l10n_it_edi_sender = fields.Selection(
         [("CC", "Assignee / Partner"), ("TZ", "Third Person")], string="Sender"
     )
+    l10n_it_edi_attachment_id = fields.Many2one(
+        "ir.attachment",
+        string="FatturaPA Attachment",
+        compute="_compute_l10n_it_edi_attachment_id",
+    )
     l10n_it_edi_attachment_preview_link = fields.Char(
         string="Preview link",
         compute="_compute_l10n_it_edi_attachment_preview_link",
@@ -122,6 +127,18 @@ class AccountMoveInherit(models.Model):
     # -------------------------------------------------------------------------
     # Computes
     # -------------------------------------------------------------------------
+
+    @api.depends("l10n_it_edi_attachment_file")
+    def _compute_l10n_it_edi_attachment_id(self):
+        for move in self:
+            move.l10n_it_edi_attachment_id = self.env["ir.attachment"].search(
+                [
+                    ("res_model", "=", "account.move"),
+                    ("res_id", "=", move.id),
+                    ("res_field", "=", "l10n_it_edi_attachment_file"),
+                ],
+                limit=1,
+            )
 
     @api.depends("l10n_it_edi_attachment_id")
     def _compute_l10n_it_edi_attachment_preview_link(self):
