@@ -11,11 +11,6 @@ def migrate(env, version):
     )
     # In Odoo 18+, ir.model.fields.translate is a varchar, but openupgradelib
     # expects it to be a boolean, causing a DatatypeMismatch error in PostgreSQL.
-    # Since l10n_it_account_stamp_2_euro is re-loaded by load_data above,
-    # skipping this cleanup is safe.
-    try:
-        openupgrade.delete_record_translations(
-            env.cr, "l10n_it_account_stamp", ["l10n_it_account_stamp_2_euro"]
-        )
-    except Exception:
-        pass
+    # We remove this call because it is broken in openupgradelib and redundant
+    # since load_data handles translation updates.
+    pass
