@@ -7,9 +7,9 @@
     <template
         id="fiscalcode_details"
         name="Add fiscalcode"
-        inherit_id="portal.portal_my_details"
+        inherit_id="portal.address_form_fields"
     >
-        <xpath expr="//input[@name='vat']/.." position="after">
+        <xpath expr="//div[@id='div_vat']" position="after">
             <div
                 t-attf-class="#{error.get('l10n_it_codice_fiscale') and 'o_has_error' or ''} col-xl-6 div-fiscalcode mb-1"
             >
