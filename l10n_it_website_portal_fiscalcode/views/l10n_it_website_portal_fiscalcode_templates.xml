@@ -7,7 +7,7 @@
     <template
         id="fiscalcode_details"
         name="Add fiscalcode"
-        inherit_id="portal.portal_my_details_fields"
+        inherit_id="portal.portal_my_details"
     >
         <xpath expr="//div[label[@for='vat']]" position="after">
             <div

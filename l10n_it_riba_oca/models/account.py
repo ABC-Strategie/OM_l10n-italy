@@ -480,9 +480,10 @@ class AccountMoveLine(models.Model):
                 raise UserError(
                     self.env._(
                         "Non è possibile emettere una riba legata ad un IBAN "
-                        "archiviato; riga: %s , contatto: %s"
+                        "archiviato; riga: %(line_name)s , contatto: %(partner_name)s",
+                        line_name=line.name,
+                        partner_name=line.partner_id.name,
                     )
-                    % (line.name, line.partner_id.name)
                 )
         ctx = dict(self.env.context)
         ctx.pop("active_id", None)
