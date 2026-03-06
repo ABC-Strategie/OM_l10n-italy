@@ -17,7 +17,7 @@
                 <field name="is_stamp_line" column_invisible="True" />
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/list" position="attributes">
-                <attribute name="colors">CadetBlue:is_stamp_line==True;</attribute>
+                <attribute name="decoration-info">is_stamp_line==True</attribute>
             </xpath>
             <xpath expr="//group[@id='header_right_group']" position="inside">
                 <field
