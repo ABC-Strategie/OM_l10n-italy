@@ -14,13 +14,15 @@ def migrate(cr, version):
 
     # Query SQL pura per aggirare la validazione XML di Odoo
     query = """
-        UPDATE ir_ui_view
+        UPDATE ir_ui_view v
         SET active = false
         WHERE active = true
-          AND (
-              arch_db ILIKE '%name="admin_ref"%' 
-              OR arch_db ILIKE '%name="action_open_export_send_sdi"%'
-          )
+        AND EXISTS (
+            SELECT 1
+            FROM jsonb_each_text(v.arch_db) AS t(lang, xml)
+            WHERE xml ILIKE '%name="admin_ref"%'
+            OR xml ILIKE '%name="action_open_export_send_sdi"%'
+        );
     """
     
     cr.execute(query)
