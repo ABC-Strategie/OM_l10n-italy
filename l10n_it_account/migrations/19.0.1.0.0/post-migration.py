@@ -20,12 +20,13 @@ def migrate(cr, version):
         AND EXISTS (
             SELECT 1
             FROM jsonb_each_text(v.arch_db) AS t(lang, xml)
-            WHERE xml ILIKE '%name="admin_ref"%'
-            OR xml ILIKE '%name="action_open_export_send_sdi"%'
+            WHERE xml ILIKE %s
+            OR xml ILIKE %s
         );
     """
     
-    cr.execute(query)
+    params = ('%name="admin_ref"%', '%name="action_open_export_send_sdi"%')
+    cr.execute(query, params)
     
     # Contiamo quante viste abbiamo disattivato per avere un riscontro nel log
     archived_count = cr.rowcount

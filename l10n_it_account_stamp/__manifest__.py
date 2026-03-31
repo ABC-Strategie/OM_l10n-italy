@@ -5,6 +5,7 @@
 # Copyright 2018-2020 Sergio Zanchetta (https://github.com/primes2h)
 # Copyright 2021 Gianmarco Conte <gconte@dinamicheaziendali.it>
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+# Verified and migrated to Odoo 19 (Migration scripts adapted to odoo.upgrade.util)
 
 {
     "name": "ITA - Imposta di bollo",
@@ -16,6 +17,7 @@
     "website": "https://github.com/OCA/l10n-italy",
     "license": "LGPL-3",
     "depends": [
+        "base",
         "product",
         "l10n_it_edi",
     ],

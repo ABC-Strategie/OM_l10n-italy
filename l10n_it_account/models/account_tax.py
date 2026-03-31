@@ -141,20 +141,18 @@ class AccountTax(models.Model):
                 financial_type=financial_type,
                 account_ids=account_ids,
             )
-            balance = self.env["account.move.line"].read_group(domain, ["balance"], [])[
-                0
-            ]["balance"]
-            balance = balance and -balance or 0
+            res = self.env["account.move.line"]._read_group(domain, [], ["balance:sum"])
+            balance_sum = res[0][0] if res and res[0][0] else 0.0
+            balance = -balance_sum if balance_sum else 0.0
         elif exclude_account_ids is not None:
             domain = self.get_move_lines_domain(
                 tax_or_base=tax_or_base,
                 financial_type=financial_type,
                 exclude_account_ids=exclude_account_ids,
             )
-            balance = self.env["account.move.line"].read_group(domain, ["balance"], [])[
-                0
-            ]["balance"]
-            balance = balance and -balance or 0
+            res = self.env["account.move.line"]._read_group(domain, [], ["balance:sum"])
+            balance_sum = res[0][0] if res and res[0][0] else 0.0
+            balance = -balance_sum if balance_sum else 0.0
         return balance
 
     def get_move_lines_domain(

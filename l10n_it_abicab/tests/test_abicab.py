@@ -1,9 +1,10 @@
 # Copyright 2016 Davide Corio (Abstract)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.tests.common import TransactionCase
+from odoo.tests.common import TransactionCase, tagged
 
 
+@tagged("post_install", "-at_install")
 class BankCase(TransactionCase):
     def setUp(self):
         super().setUp()

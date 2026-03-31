@@ -2,6 +2,7 @@
 # Copyright (C) 2016 Ciro Urselli (<http://www.apuliasoftware.it>).
 # Copyright (C) 2025 Michele Di Croce (<http://www.stesi.consulting>).
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+# Verified and migrated to Odoo 19 (Removed deprecated XML type tags)
 
 {
     "name": "ITA - Codici Ateco",
@@ -11,7 +12,7 @@
     "development_status": "Beta",
     "website": "https://github.com/OCA/l10n-italy",
     "license": "AGPL-3",
-    "depends": ["contacts"],
+    "depends": ["base", "contacts"],
     "data": [
         "security/ir.model.access.csv",
         "views/ateco_view.xml",

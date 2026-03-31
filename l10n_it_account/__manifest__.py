@@ -7,6 +7,8 @@
 # Copyright 2022 Marco Colombo <marco.colombo@phi.technology>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+#VERIFICATO PER V 19 CON GEMINI
+
 {
     "name": "ITA - Contabilità base",
     "summary": "Modulo base usato come dipendenza di altri moduli contabili",

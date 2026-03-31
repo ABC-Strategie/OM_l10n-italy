@@ -36,7 +36,7 @@
         <field name="dpi">90</field>
     </record>
 
-    <template id="l10n_it_account.internal_layout">
+    <template id="internal_layout">
         <t t-if="not o" t-set="o" t-value="docs" />
 
         <t t-if="not company">
@@ -47,14 +47,14 @@
             <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
                 <t t-set="company" t-value="o.company_id.sudo()" />
             </t>
-            <t t-else="else">
+            <t t-else="">
                 <t t-set="company" t-value="res_company" />
             </t>
         </t>
 
         <div class="header">
             <div class="row">
-                <div class="col-xs-4">
+                <div class="col-4">
                     <h3>
                     <span t-esc="company.name" />
                 </h3>
@@ -65,7 +65,7 @@
                     <span class="text-end">TIN: </span>
                     <span t-esc="company.partner_id.vat" class="" /><br />
                 </div>
-                <div class="col-xs-4 col-xs-offset-4 text-end" style="margin-left:10px">
+                <div class="col-4 offset-4 text-end" style="margin-left:10px">
                     <h3 t-esc="title" />
                 </div>
             </div>

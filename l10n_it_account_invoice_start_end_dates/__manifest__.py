@@ -1,5 +1,6 @@
 # Copyright 2026 Lorenzo Battistini
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
+# Compatibility with Odoo 19.0 verified with Claude (2026-03-31).
 
 {
     "name": "ITA - Account Invoice Start End Dates",

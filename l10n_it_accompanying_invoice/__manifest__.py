@@ -1,3 +1,5 @@
+# Compatibilità con Odoo 19.0 verificata con Claude (2026-03-31)
+# In attesa della migrazione di delivery_carrier_partner da parte di OCA
 # Copyright 2017 Lorenzo Battistini - Agile Business Group
 # Copyright 2020 Simone Vanin - Agile Business Group
 # Copyright 2023 Simone Rubino - Aion Tech
@@ -9,8 +11,7 @@
     "summary": "Stampa della fattura accompagnatoria",
     "version": "19.0.1.0.0",
     "category": "Accounting",
-    "website": "https://github.com/OCA/l10n-italy"
-    "/tree/18.0/l10n_it_accompanying_invoice",
+    "website": "https://github.com/OCA/l10n-italy",
     "author": "Agile Business Group, " "Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "application": False,

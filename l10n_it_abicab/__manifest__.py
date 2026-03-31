@@ -3,6 +3,8 @@
 # Copyright 2018 Sergio Zanchetta (Associazione PNLUG - Gruppo Odoo)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+#VERIFICATO PER V 19 CON GEMINI
+
 {
     "name": "ITA - Codici bancari ABI/CAB",
     "version": "19.0.1.0.0",
@@ -13,7 +15,7 @@
     "website": "https://github.com/OCA/l10n-italy",
     "license": "AGPL-3",
     "maintainers": ["Borruso"],
-    "depends": ["account"],
+    "depends": ["base", "account"],
     "data": ["views/abicab_view.xml"],
     "installable": True,
 }
