@@ -1,11 +1,11 @@
 #  Copyright 2024 Sergio Zanchetta
 #  License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo.upgrade import util
-
+from openupgradelib import openupgrade
 
 def migrate(cr, version):
     # Aggiorna i record bloccati ricaricando l'XML da data.xml (bypassando noupdate)
-    # in conformità alle best practices di migrazione di Odoo 19
-    util.update_record_from_xml(cr, "l10n_it_account_stamp.l10n_it_account_stamp_2_euro")
-    util.update_record_from_xml(cr, "base.main_company")
+    cr.execute("UPDATE ir_model_data SET noupdate=False WHERE module='l10n_it_account_stamp' AND name='l10n_it_account_stamp_2_euro'")
+    cr.execute("UPDATE ir_model_data SET noupdate=False WHERE module='base' AND name='main_company'")
+    
+    openupgrade.load_data(cr, 'l10n_it_account_stamp', 'data/data.xml')
