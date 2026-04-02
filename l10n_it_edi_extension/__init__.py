@@ -777,22 +777,17 @@ def _l10n_it_fatturapa_in_post_migration(env):
                 """,
             )
 
-    env.cr.execute("""
-        SELECT
-            am.id,
-            fai.ir_attachment_id AS attachment_id
+    query = """
+        UPDATE ir_attachment
+        SET res_model = 'account.move',
+            res_id = am.id,
+            res_field = 'l10n_it_edi_attachment_file'
         FROM account_move am
         JOIN fatturapa_attachment_in fai ON fai.id = am.fatturapa_attachment_in_id
-        WHERE am.fatturapa_attachment_in_id IS NOT NULL
-    """)
-    rows = env.cr.fetchall()
-    for row in rows:
-        invoice_id, attachment_id = row
-        move = env["account.move"].browse(invoice_id)
-        attachment = env["ir.attachment"].browse(attachment_id)
-        attachment.res_model = "account.move"
-        attachment.res_id = move.id
-        attachment.res_field = "l10n_it_edi_attachment_file"
+        WHERE ir_attachment.id = fai.ir_attachment_id
+          AND am.fatturapa_attachment_in_id IS NOT NULL
+    """
+    openupgrade.logged_query(env.cr, query)
 
 
 def _l10n_it_fatturapa_out_post_migration(env):
