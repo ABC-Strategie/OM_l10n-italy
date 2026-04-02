@@ -298,7 +298,10 @@ class PurchaseOrder(models.Model):
             )
             order_not_yet_invoiced = 0
             for line in order_lines:
-                price_reduce = line.price_unit_discounted
+                # price_unit_discounted was removed in Odoo 17+;
+                # compute net unit price manually.
+                discount = getattr(line, "discount", 0.0) or 0.0
+                price_reduce = line.price_unit * (1.0 - discount / 100.0)
                 qty_invoiced = line.qty_invoiced
                 if line.id in additional_invoiced_qty:
                     qty_invoiced += additional_invoiced_qty.get(line.ids[0], 0)

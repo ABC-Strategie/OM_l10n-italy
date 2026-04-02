@@ -18,6 +18,11 @@ class AccountMove(models.Model):
         "partner_id",
     )
     def _onchange_partner_shipping_data(self):
+        # NOTE: In Odoo 17+ @api.onchange on account.move is deprecated in favour
+        # of @api.depends/_compute. This onchange is kept for UI reactivity but
+        # the real default propagation happens in _prepare_invoice (sale_order.py).
+        # If l10n_it_delivery_note provides its own compute for these fields,
+        # this onchange can be safely removed.
         for invoice in self:
             partner = invoice.partner_id
             if partner:

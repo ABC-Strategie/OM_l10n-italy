@@ -10,11 +10,10 @@ def _default_volume_uom(model):
 
 
 def _domain_volume_uom(model):
-    uom_category_id = model.env.ref(
-        "uom.product_uom_categ_vol", raise_if_not_found=False
-    )
-
-    return [("category_id", "=", uom_category_id.id)]
+    uom_milliliter = model.env.ref("uom.product_uom_milliliter", raise_if_not_found=False)
+    if not uom_milliliter:
+        return []
+    return [("id", "child_of", uom_milliliter.id)]
 
 
 def _default_weight_uom(model):
@@ -22,11 +21,10 @@ def _default_weight_uom(model):
 
 
 def _domain_weight_uom(model):
-    uom_category_id = model.env.ref(
-        "uom.product_uom_categ_kgm", raise_if_not_found=False
-    )
-
-    return [("category_id", "=", uom_category_id.id)]
+    uom_gram = model.env.ref("uom.product_uom_gram", raise_if_not_found=False)
+    if not uom_gram:
+        return []
+    return [("id", "child_of", uom_gram.id)]
 
 
 class DeliveryData(models.AbstractModel):

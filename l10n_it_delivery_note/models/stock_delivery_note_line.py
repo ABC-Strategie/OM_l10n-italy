@@ -120,9 +120,10 @@ class StockDeliveryNoteLine(models.Model):
 
             self.name = name
 
-            product_uom_domain = [
-                ("category_id", "=", self.product_id.uom_id.category_id.id)
-            ]
+            uom = self.product_id.uom_id
+            while uom.relative_uom_id:
+                uom = uom.relative_uom_id
+            product_uom_domain = [("id", "child_of", uom.id)]
 
         else:
             product_uom_domain = []
