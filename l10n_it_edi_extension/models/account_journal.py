@@ -148,5 +148,6 @@ class AccountJournal(models.Model):
         return (e_invoice_attachments | other_attachments).ids
 
     def _create_document_from_attachment(self, attachment_ids):
-        attachment_ids = self._l10n_it_edi_extension_split_attachments(attachment_ids)
+        # In Odoo 19, lo splitting degli attachment (ad es. FatturaElettronicaBody multipli)
+        # è gestito nativamente dal core tramite account.document.import.mixin._unwrap_attachments
         return super()._create_document_from_attachment(attachment_ids)

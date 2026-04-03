@@ -23,7 +23,16 @@ class IrAttachmentInherit(models.Model):
         return "FoglioStileAssoSoftware.xsl"
 
     def get_xml_string(self):
-        if not self._is_l10n_it_edi_import_file():
+        import re
+        from odoo.addons.l10n_it_edi.models.account_move import FATTURAPA_FILENAME_RE
+        
+        is_xml = (
+            self.name.endswith('.xml')
+            or self.mimetype.endswith('/xml')
+            or 'text/plain' in self.mimetype and self.raw and self.raw.startswith(b'<?xml')
+        )
+        is_p7m = self.mimetype == 'application/pkcs7-mime'
+        if not ((is_xml or is_p7m) and re.search(FATTURAPA_FILENAME_RE, self.name)):
             raise UserError(self.env._("Invalid xml %s.") % self.name)
 
         # from _decode_edi_l10n_it_edi()
