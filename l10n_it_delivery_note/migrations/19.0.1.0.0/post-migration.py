@@ -5,3 +5,5 @@
 # No breaking changes detected by automated analysis.
 # Version: 19.0.1.0.0
 # This stub ensures OpenUpgrade tracks the module update correctly.
+def migrate(cr, version):
+    pass
