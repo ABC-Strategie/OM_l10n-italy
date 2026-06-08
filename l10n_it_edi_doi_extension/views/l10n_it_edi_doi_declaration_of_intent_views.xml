@@ -32,7 +32,7 @@
                     domain="[('type','=', 'out')]"
                     help="Show received declarations"
                 />
-                <group expand="1" string="Group By">
+                <group>
                     <filter
                         name="group_by_partner"
                         string="Partner"
