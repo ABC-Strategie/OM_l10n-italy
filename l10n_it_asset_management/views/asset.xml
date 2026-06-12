@@ -12,7 +12,7 @@
                 <field name="name" />
                 <field name="code" />
                 <field name="category_id" />
-                <group expand="0" string="Group By">
+                <group>
                     <filter
                         string="Purchase Date"
                         name="group_by_purchase_date"

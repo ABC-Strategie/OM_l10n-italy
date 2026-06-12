@@ -19,7 +19,7 @@
                     string="Move"
                     filter_domain="['|', ('move_id.name', 'ilike', self), ('move_id.ref', 'ilike', self)]"
                 />
-                <group expand="0" string="Group By">
+                <group>
                     <filter
                         string="Asset"
                         name="group_by_asset"
