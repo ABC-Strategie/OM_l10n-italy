@@ -25,7 +25,7 @@
                 <filter name="out" string="Out" domain="[('move_type','=','out')]" />
                 <filter name="loss" string="Loss" domain="[('move_type','=','loss')]" />
                 <filter name="gain" string="Gain" domain="[('move_type','=','gain')]" />
-                <group expand="0" string="Group By">
+                <group>
                     <filter
                         string="Asset"
                         name="group_by_asset_id"
