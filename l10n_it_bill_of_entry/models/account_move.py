@@ -4,7 +4,9 @@
 
 from odoo import fields, models
 from odoo.exceptions import UserError
-from odoo.fields import first
+
+def first(recordset):
+    return recordset[0] if recordset else recordset.browse()
 
 
 class AccountMove(models.Model):
