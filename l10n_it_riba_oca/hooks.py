@@ -15,3 +15,14 @@ def pre_absorb_old_module(env):
             ],
             merge_modules=True,
         )
+
+
+def migrate_old_module(cr):
+    if openupgrade.is_module_installed(cr, "l10n_it_riba"):
+        openupgrade.update_module_names(
+            cr,
+            [
+                ("l10n_it_riba", "l10n_it_riba_oca"),
+            ],
+            merge_modules=True,
+        )
