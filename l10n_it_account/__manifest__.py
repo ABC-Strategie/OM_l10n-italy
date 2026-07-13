@@ -7,12 +7,10 @@
 # Copyright 2022 Marco Colombo <marco.colombo@phi.technology>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-#VERIFICATO PER V 19 CON GEMINI
-
 {
     "name": "ITA - Contabilità base",
     "summary": "Modulo base usato come dipendenza di altri moduli contabili",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "development_status": "Production/Stable",
     "category": "Hidden",
     "author": "Agile Business Group, Abstract, Odoo Community Association (OCA)",
@@ -38,9 +36,4 @@
     },
     "installable": True,
     "post_init_hook": "_l10n_it_account_post_init",
-    "external_dependencies": {
-        "python": [
-            "openupgradelib",
-        ],
-    },
 }

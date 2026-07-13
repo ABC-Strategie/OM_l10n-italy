@@ -4,14 +4,18 @@
   ~ License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
   -->
 <odoo>
+    <record id="res_groups_privilege_asset_management" model="res.groups.privilege">
+        <field name="name">Cespiti (Localizzazione)</field>
+        <field name="category_id" ref="base.module_category_accounting" />
+    </record>
+
     <record id="group_asset_user" model="res.groups">
         <field name="name">Asset Users</field>
-        <field name="category_id" ref="base.module_category_hidden" />
-        <field name="users" eval="[Command.link(ref('base.user_root'))]" />
+        <field name="user_ids" eval="[Command.link(ref('base.user_root'))]" />
     </record>
     <record id="group_account_invoice_assets" model="res.groups">
         <field name="name">Billing and Assets</field>
-        <field name="category_id" ref="base.module_category_accounting_accounting" />
+        <field name="privilege_id" ref="res_groups_privilege_asset_management" />
         <field
             name="implied_ids"
             eval="[

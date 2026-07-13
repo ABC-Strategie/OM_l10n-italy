@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_abc_tax_integration_wizard_form" model="ir.ui.view">
+        <field name="name">abc.tax.integration.wizard.form</field>
+        <field name="model">abc.tax.integration.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Anteprima XML Integrazione">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Anteprima XML</h1>
+                    </div>
+                    <group>
+                        <field name="move_id" invisible="1"/>
+                        <field name="xml_content" nolabel="1" readonly="1" widget="code" options="{'mode': 'xml'}" style="height: 400px;"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_send" string="Conferma e Invia" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Annulla" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

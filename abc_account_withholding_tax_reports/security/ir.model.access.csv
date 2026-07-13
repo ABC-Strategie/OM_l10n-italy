@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_abc_withholding_tax_statement_read,withholding.tax.statement.read,l10n_it_withholding_tax.model_withholding_tax_statement,account.group_account_readonly,1,0,0,0
+access_abc_withholding_tax_move_read,withholding.tax.move.read,l10n_it_withholding_tax.model_withholding_tax_move,account.group_account_readonly,1,0,0,0
+access_abc_withholding_tax_read,withholding.tax.read,l10n_it_withholding_tax.model_withholding_tax,account.group_account_readonly,1,0,0,0
+access_abc_withholding_tax_rate_read,withholding.tax.rate.read,l10n_it_withholding_tax.model_withholding_tax_rate,account.group_account_readonly,1,0,0,0

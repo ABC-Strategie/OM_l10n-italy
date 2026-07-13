@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- MENU PRINCIPALE SOTTO CONTABILITA' (Reporting) -->
+    <menuitem
+        id="abc_wt_main"
+        name="Ritenuta d'acconto (Storico)"
+        parent="account.menu_finance_entries"
+        sequence="50"
+        groups="account.group_account_manager"
+    />
+
+    <!-- ============================================== -->
+    <!-- WITHHOLDING TAX STATEMENT (Dichiarazione)      -->
+    <!-- ============================================== -->
+    <record id="view_abc_withholding_statement_tree" model="ir.ui.view">
+        <field name="name">abc.withholding.tax.statement.tree</field>
+        <field name="model">withholding.tax.statement</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="wt_type" />
+                <field name="partner_id" />
+                <field name="date" />
+                <field name="move_id" />
+                <field name="invoice_id" />
+                <field name="withholding_tax_id" />
+                <field name="company_id" groups="base.group_multi_company" />
+                <field name="base" sum="Tot Base" />
+                <field name="tax" />
+                <field name="amount" sum="Tot Amount" />
+                <field name="amount_paid" sum="Tot Amount Paid" />
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_withholding_statement_form" model="ir.ui.view">
+        <field name="name">abc.withholding.tax.statement.form</field>
+        <field name="model">withholding.tax.statement</field>
+        <field name="arch" type="xml">
+            <form
+                string="Dichiarazione ritenuta d'acconto"
+                create="false"
+                edit="false"
+                delete="false"
+            >
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id" />
+                            <field name="withholding_tax_id" />
+                            <field name="base" />
+                            <field name="tax" />
+                        </group>
+                        <group>
+                            <field name="date" />
+                            <field name="move_id" />
+                            <field name="invoice_id" />
+                            <field
+                                name="company_id"
+                                groups="base.group_multi_company"
+                                readonly="1"
+                            />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Movimenti RdA" name="wt_moves">
+                            <group>
+                                <field name="move_ids" nolabel="1">
+                                    <list delete="false">
+                                        <field name="date" />
+                                        <field name="withholding_tax_id" />
+                                        <field name="date_maturity" />
+                                        <field name="amount" />
+                                        <field name="state" />
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_withholding_tax_statement_search" model="ir.ui.view">
+        <field name="name">abc.withholding.tax.statement.search</field>
+        <field name="model">withholding.tax.statement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id" />
+                <field name="withholding_tax_id" />
+            </search>
+        </field>
+    </record>
+
+    <record id="action_abc_withholding_tax_statement" model="ir.actions.act_window">
+        <field name="name">Dichiarazione ritenuta d'acconto</field>
+        <field name="res_model">withholding.tax.statement</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_abc_withholding_statement_tree" />
+        <field name="search_view_id" ref="view_abc_withholding_tax_statement_search" />
+    </record>
+
+    <record id="action_server_sync_wt_statement" model="ir.actions.server">
+        <field name="name">Sync and Open WT Statements</field>
+        <field name="model_id" ref="l10n_it_withholding_tax.model_withholding_tax_statement"/>
+        <field name="state">code</field>
+        <field name="code">
+env['withholding.tax.statement'].action_sync_wt_moves()
+action = env.ref('abc_account_withholding_tax_reports.action_abc_withholding_tax_statement').read()[0]
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_abc_withholding_tax_statement"
+        name="Dichiarazione ritenuta d'acconto"
+        action="action_server_sync_wt_statement"
+        parent="abc_wt_main"
+        sequence="5"
+    />
+
+    <!-- ============================================== -->
+    <!-- WITHHOLDING TAX MOVE (Movimento)               -->
+    <!-- ============================================== -->
+    <record id="view_abc_withholding_move_tree" model="ir.ui.view">
+        <field name="name">abc.withholding.tax.move.tree</field>
+        <field name="model">withholding.tax.move</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="wt_type" />
+                <field name="partner_id" />
+                <field name="date" />
+                <field name="withholding_tax_id" />
+                <field name="company_id" groups="base.group_multi_company" />
+                <field name="date_maturity" />
+                <field name="amount" sum="Tot" />
+                <field name="account_move_id" />
+                <field name="state" />
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_withholding_move_form" model="ir.ui.view">
+        <field name="name">abc.withholding.tax.move.form</field>
+        <field name="model">withholding.tax.move</field>
+        <field name="arch" type="xml">
+            <form
+                string="Movimento ritenuta di acconto"
+                create="false"
+                edit="false"
+                delete="false"
+            >
+                <header>
+                    <field
+                        name="state"
+                        widget="statusbar"
+                        statusbar_visible="due,paid"
+                    />
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id" />
+                            <field name="date" />
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="withholding_tax_id" />
+                            <field name="amount" />
+                        </group>
+                        <group>
+                            <field name="account_move_id" />
+                            <field name="reconcile_partial_id" />
+                            <field name="date_maturity" />
+                            <field name="wt_account_move_id" />
+                            <field name="full_reconcile_id" />
+                            <field
+                                name="company_id"
+                                groups="base.group_multi_company"
+                                readonly="1"
+                            />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_withholding_move_search" model="ir.ui.view">
+        <field name="name">abc.withholding.tax.move.search</field>
+        <field name="model">withholding.tax.move</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id" />
+                <field name="withholding_tax_id" />
+            </search>
+        </field>
+    </record>
+
+    <record id="action_abc_withholding_tax_move" model="ir.actions.act_window">
+        <field name="name">Movimento ritenuta di acconto</field>
+        <field name="res_model">withholding.tax.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_abc_withholding_move_tree" />
+        <field name="search_view_id" ref="view_abc_withholding_move_search" />
+        <field name="context">{'search_default_due': True}</field>
+    </record>
+
+    <record id="action_server_sync_wt_move" model="ir.actions.server">
+        <field name="name">Sync and Open WT Moves</field>
+        <field name="model_id" ref="l10n_it_withholding_tax.model_withholding_tax_statement"/>
+        <field name="state">code</field>
+        <field name="code">
+env['withholding.tax.statement'].action_sync_wt_moves()
+action = env.ref('abc_account_withholding_tax_reports.action_abc_withholding_tax_move').read()[0]
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_abc_withholding_tax_move"
+        name="Movimento ritenuta di acconto"
+        action="action_server_sync_wt_move"
+        parent="abc_wt_main"
+        sequence="10"
+    />
+
+</odoo>

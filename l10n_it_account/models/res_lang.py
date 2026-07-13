@@ -27,4 +27,9 @@ class Lang(models.Model):
         )
         menu_finance = self.env["ir.ui.menu"].browse(menu_finance_id)
 
-        menu_finance.update_field_translations("name", {"it_IT": "Contabilità"})
+        field_name = menu_finance._fields["name"]
+        translations = field_name._get_stored_translations(menu_finance)
+
+        translations["it_IT"] = "Contabilità"
+        self.env.cache.update_raw(menu_finance, field_name, [translations], dirty=True)
+        menu_finance.modified(["name"])

@@ -82,7 +82,7 @@ class CreateFinancialStatementWizard(models.TransientModel):
         "financial.statement.eu.log",
         "financial_statement_id",
         string="Unlinked Account",
-        auto_join=True,
+
     )
     state = fields.Selection(
         [
