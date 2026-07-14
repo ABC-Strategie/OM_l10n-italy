@@ -5,7 +5,7 @@
 import re
 
 from odoo import models
-from odoo.osv import expression
+from odoo.fields import Domain
 
 
 class AccountTax(models.Model):
@@ -30,10 +30,10 @@ class AccountTax(models.Model):
         The domain falls back on the move date if the settlement date is empty.
         """
         settlement_domain = self._get_settlement_date_domain(domain)
-        domain = expression.OR(
+        domain = Domain.OR(
             [
                 settlement_domain,
-                expression.AND(
+                Domain.AND(
                     [
                         [("l10n_it_vat_settlement_date", "=", None)],
                         domain,
@@ -41,7 +41,8 @@ class AccountTax(models.Model):
                 ),
             ]
         )
-        return domain
+        # callers may still combine the result as a plain list domain
+        return list(domain)
 
     def get_move_line_partial_domain(self, from_date, to_date, company_ids):
         domain = super().get_move_line_partial_domain(from_date, to_date, company_ids)
