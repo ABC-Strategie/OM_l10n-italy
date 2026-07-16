@@ -249,7 +249,7 @@
     <menuitem
         id="menu_account_intrastat_statement"
         action="account_intrastat_statement_action"
-        parent="l10n_it_intrastat.menu_intrastat_statement"
+        parent="l10n_it_intrastat_oca.menu_intrastat_statement"
         sequence="10"
     />
 

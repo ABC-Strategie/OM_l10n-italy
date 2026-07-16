@@ -11,7 +11,7 @@
     "website": "https://github.com/OCA/l10n-italy",
     "license": "AGPL-3",
     "depends": [
-        "l10n_it_intrastat",
+        "l10n_it_intrastat_oca",
     ],
     "data": [
         "data/sequence.xml",
