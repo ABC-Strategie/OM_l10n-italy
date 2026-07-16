@@ -12,7 +12,7 @@
     'author': "A.B.C. S.r.l.",
     'website': "https://www.abcstrategie.it",
     'category': 'Accounting',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.2',
     'depends': ['account', 'l10n_it_withholding_tax'],
     'data': [
         'security/ir.model.access.csv',

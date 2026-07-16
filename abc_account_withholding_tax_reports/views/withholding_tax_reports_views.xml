@@ -6,7 +6,7 @@
         name="Ritenuta d'acconto (Storico)"
         parent="account.menu_finance_entries"
         sequence="50"
-        groups="account.group_account_manager"
+        groups="account.group_account_readonly"
     />
 
     <!-- ============================================== -->
@@ -103,6 +103,7 @@
     <record id="action_server_sync_wt_statement" model="ir.actions.server">
         <field name="name">Sync and Open WT Statements</field>
         <field name="model_id" ref="l10n_it_withholding_tax.model_withholding_tax_statement"/>
+        <field name="group_ids" eval="[(4, ref('account.group_account_readonly'))]"/>
         <field name="state">code</field>
         <field name="code">
 env['withholding.tax.statement'].action_sync_wt_moves()
@@ -209,6 +210,7 @@ action = env.ref('abc_account_withholding_tax_reports.action_abc_withholding_tax
     <record id="action_server_sync_wt_move" model="ir.actions.server">
         <field name="name">Sync and Open WT Moves</field>
         <field name="model_id" ref="l10n_it_withholding_tax.model_withholding_tax_statement"/>
+        <field name="group_ids" eval="[(4, ref('account.group_account_readonly'))]"/>
         <field name="state">code</field>
         <field name="code">
 env['withholding.tax.statement'].action_sync_wt_moves()
