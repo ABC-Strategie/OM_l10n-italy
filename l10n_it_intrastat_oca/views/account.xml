@@ -203,7 +203,7 @@
                     name="country_destination_id"
                     filter_domain="[('country_destination_id','ilike',self)]"
                 />
-                <group expand="0" string="Group By...">
+                <group name="group_by">
                     <filter
                         name="group_by_partne"
                         string="Partner"
