@@ -153,7 +153,7 @@ class StockDeliveryNoteLine(models.Model):
                 line["price_unit"] = order_line.price_unit
                 line["currency_id"] = order.currency_id.id
                 line["discount"] = order_line.discount
-                line["tax_ids"] = [(6, False, order_line.tax_id.ids)]
+                line["tax_ids"] = [(6, False, order_line.tax_ids.ids)]
                 line["invoice_status"] = DOMAIN_INVOICE_STATUSES[1]
 
             lines.append(line)

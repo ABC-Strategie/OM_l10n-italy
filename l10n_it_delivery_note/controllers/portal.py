@@ -1,6 +1,5 @@
 from odoo.exceptions import AccessError, MissingError
 from odoo.http import request, route
-from odoo.osv.expression import OR
 
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.portal.controllers.portal import pager as portal_pager
@@ -66,7 +65,7 @@ class DNCustomerPortal(CustomerPortal):
         if search and search_in:
             search_domain = []
             if search_in == "name":
-                search_domain = OR([search_domain, [("name", "ilike", search)]])
+                search_domain = [("name", "ilike", search)]
             domain += search_domain
 
         pager_values = portal_pager(
