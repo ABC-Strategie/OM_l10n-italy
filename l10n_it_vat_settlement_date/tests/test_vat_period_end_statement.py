@@ -14,6 +14,17 @@ from odoo.addons.l10n_it_account_vat_period_end_settlement.tests.common import (
 
 @tagged("post_install", "-at_install")
 class TestVATPeriodEndStatement(TestVATStatementCommon):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # Il fornitore viene creato dal test: i dati dimostrativi non sono
+        # disponibili sui database reali (es. copie di produzione).
+        cls.test_supplier = cls.env["res.partner"].create(
+            {
+                "name": "Fornitore liquidazione IVA",
+            }
+        )
+
     def test_statement(self):
         """The settlement date decides whether a move is in the statement."""
         # Set the company context
@@ -23,7 +34,7 @@ class TestVATPeriodEndStatement(TestVATStatementCommon):
         tax = self.company_data_2["default_tax_purchase"]
         out_of_period_date = current_period.date_end + relativedelta(days=+1)
         bill = self._create_vendor_bill(
-            self.env.ref("base.res_partner_4"),
+            self.test_supplier,
             out_of_period_date,
             100,
             tax,
@@ -82,7 +93,7 @@ class TestVATPeriodEndStatement(TestVATStatementCommon):
         tax = self.company_data_2["default_tax_purchase"]
         in_period_date = current_period.date_end + relativedelta(days=-1)
         bill = self._create_vendor_bill(
-            self.env.ref("base.res_partner_4"),
+            self.test_supplier,
             in_period_date,
             100,
             tax,
