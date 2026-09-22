@@ -13,7 +13,12 @@
     "Odoo Italia Network, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/l10n-italy",
     "license": "AGPL-3",
-    "excludes": ["l10n_it_edi"],
+    # Rimosso per la migrazione a 19.0: l'esclusione resta in
+    # ir_module_module_exclusion e blocca l'upgrade allo step 17.0, dove
+    # l10n_it_edi viene auto-installato sopra l10n_it. Il target 19.0 e'
+    # l10n_it_edi nativo + l10n_it_edi_extension, quindi la coesistenza va
+    # permessa. Branch dedicato: non fondere su 16.0 (usato dalla produzione).
+    # "excludes": ["l10n_it_edi"],
     "depends": [
         "l10n_it_account",
         "l10n_it_fiscalcode",
