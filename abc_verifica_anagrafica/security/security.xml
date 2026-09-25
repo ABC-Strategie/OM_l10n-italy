@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Privilege (Odoo 19: sostituisce category_id su res.groups) -->
+        <record id="privilege_abc_va" model="res.groups.privilege">
+            <field name="name">Verifica anagrafica tributaria</field>
+            <field name="description">Verifica dei codici fiscali tramite le API dell'Agenzia delle Entrate</field>
+            <field name="category_id" ref="base.module_category_accounting_localizations"/>
+        </record>
+
+        <!-- Utente: legge stato ed esiti, può usare "Verifica ora" -->
+        <record id="group_abc_va_user" model="res.groups">
+            <field name="name">Utente</field>
+            <field name="privilege_id" ref="privilege_abc_va"/>
+            <field name="sequence">1</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Amministratore: configura credenziali, forza ri-verifiche,
+             accede a log e coda -->
+        <record id="group_abc_va_manager" model="res.groups">
+            <field name="name">Amministratore</field>
+            <field name="privilege_id" ref="privilege_abc_va"/>
+            <field name="sequence">2</field>
+            <field name="implied_ids" eval="[(4, ref('abc_verifica_anagrafica.group_abc_va_user'))]"/>
+        </record>
+
+    </data>
+
+    <data noupdate="1">
+        <!-- L'amministratore di sistema riceve il gruppo alla prima installazione -->
+        <record id="base.user_admin" model="res.users">
+            <field name="group_ids" eval="[(4, ref('abc_verifica_anagrafica.group_abc_va_manager'))]"/>
+        </record>
+    </data>
+</odoo>

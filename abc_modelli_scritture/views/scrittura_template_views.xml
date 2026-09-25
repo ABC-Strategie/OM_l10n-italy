@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_abc_template_list" model="ir.ui.view">
+        <field name="name">abc.modelli.scritture.template.list</field>
+        <field name="model">abc.modelli.scritture.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="descrizione"/>
+                <field name="journal_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'confermato'"
+                       decoration-muted="state == 'bozza'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_template_form" model="ir.ui.view">
+        <field name="name">abc.modelli.scritture.template.form</field>
+        <field name="model">abc.modelli.scritture.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_conferma" type="object"
+                            string="Conferma modello" class="btn-primary"
+                            invisible="state == 'confermato'"/>
+                    <button name="action_genera_scrittura" type="object"
+                            string="Genera scrittura"
+                            class="btn-primary"
+                            invisible="not line_ids"/>
+                    <button name="action_riporta_in_bozza" type="object"
+                            string="Modifica modello"
+                            invisible="state != 'confermato'"
+                            confirm="Stai per modificare un modello confermato. Le modifiche cambieranno le prossime scritture generate da questo modello. Vuoi procedere?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="bozza,confermato"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Es. Scrittura stipendi"
+                                   readonly="state == 'confermato'"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="descrizione"
+                                   readonly="state == 'confermato'"/>
+                            <field name="journal_id"
+                                   readonly="state == 'confermato'"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   readonly="state == 'confermato'"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" readonly="state == 'confermato'">
+                        <list editable="bottom" decoration-warning="avviso_lato">
+                            <field name="sequence" widget="handle"/>
+                            <field name="account_id"/>
+                            <field name="partner_id" optional="show"/>
+                            <field name="name"/>
+                            <field name="analytic_distribution" widget="analytic_distribution"
+                                   optional="show"/>
+                            <field name="analytic_precision" column_invisible="1"/>
+                            <field name="lato_naturale" optional="hide"/>
+                            <field name="dare" sum="Totale Dare"/>
+                            <field name="avere" sum="Totale Avere"/>
+                            <field name="avviso_lato" optional="show"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                    <group class="oe_subtotal_footer" name="totali">
+                        <field name="totale_dare"/>
+                        <field name="totale_avere"/>
+                        <field name="sbilancio"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_template_search" model="ir.ui.view">
+        <field name="name">abc.modelli.scritture.template.search</field>
+        <field name="model">abc.modelli.scritture.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="descrizione"/>
+                <field name="journal_id"/>
+                <filter name="bozza" string="Bozza"
+                        domain="[('state', '=', 'bozza')]"/>
+                <filter name="confermato" string="Confermato"
+                        domain="[('state', '=', 'confermato')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_abc_template" model="ir.actions.act_window">
+        <field name="name">Modelli di scrittura</field>
+        <field name="res_model">abc.modelli.scritture.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">
+                Crea il tuo primo modello di scrittura contabile
+            </p>
+            <p>
+                Un modello raccoglie i conti di una scrittura ricorrente
+                (es. stipendi). Da un modello puoi generare la registrazione
+                nel registro Varie inserendo ogni mese solo gli importi effettivi.
+            </p>
+        </field>
+    </record>
+
+</odoo>

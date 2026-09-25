@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_abc_va_root"
+              name="Verifica anagrafica"
+              parent="account.menu_finance_configuration"
+              sequence="90"
+              groups="abc_verifica_anagrafica.group_abc_va_manager"/>
+
+    <menuitem id="menu_abc_va_queue"
+              name="Coda verifiche"
+              parent="menu_abc_va_root"
+              action="action_abc_va_queue"
+              sequence="10"/>
+
+    <menuitem id="menu_abc_va_log"
+              name="Log verifiche"
+              parent="menu_abc_va_root"
+              action="action_abc_va_log"
+              sequence="20"/>
+
+</odoo>

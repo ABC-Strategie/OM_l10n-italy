@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_financial_statements_full_wizard" model="ir.actions.act_window">
+        <field name="name">Situazione contabile a sezioni contrapposte</field>
+        <field name="res_model">trial.balance.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="l10n_it_financial_statements_report.wizard_report_financial_statements_report"/>
+        <field name="target">new</field>
+        <field name="context">{'default_financial_statements_report_type': 'bitti_full', 'default_show_hierarchy': True, 'default_hide_account_at_0': True}</field>
+    </record>
+
+    <menuitem id="menu_financial_statements_full_wizard"
+              parent="account_financial_report.menu_oca_reports"
+              action="action_financial_statements_full_wizard"
+              sequence="11"/>
+</odoo>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_full">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+
+                <div class="header bitti_fs_header">
+                <style>
+                    .bitti_fs_header { font-size: 11px; line-height: 1.3; }
+                    .bitti_fs_header .bitti_fs_title { font-size: 16px; font-weight: bold; text-align: center; margin: 8px 0 2px 0; }
+                    .bitti_fs_header .bitti_fs_period { text-align: center; font-size: 12px; margin-bottom: 4px; }
+                    table.bitti_fs { width: 100%; border-collapse: collapse; font-size: 10px; table-layout: fixed; }
+                    table.bitti_fs thead { display: table-header-group; }
+                    table.bitti_fs th { font-weight: normal; padding: 2px 3px; border-bottom: 1px solid #444; }
+                    table.bitti_fs th.bitti_fs_section { font-size: 12px; font-weight: bold; text-align: center; border-bottom: none; padding-top: 6px; }
+                    table.bitti_fs th.bitti_fs_side { font-size: 11px; font-weight: bold; text-align: left; border-bottom: 1px solid #444; }
+                    table.bitti_fs td { padding: 1.5px 3px; vertical-align: top; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+                    table.bitti_fs tr { page-break-inside: avoid; }
+                    table.bitti_fs .bitti_fs_sep { border-left: 1px solid #444; }
+                    table.bitti_fs .bitti_fs_amount { text-align: right; }
+                    table.bitti_fs .bitti_fs_group { font-weight: bold; }
+                    table.bitti_fs .bitti_fs_account { font-style: italic; }
+                    table.bitti_fs tr.bitti_fs_total td { border-top: 1px dashed #444; padding-top: 3px; padding-bottom: 3px; }
+                    table.bitti_fs tr.bitti_fs_result td { font-weight: bold; padding-top: 3px; padding-bottom: 3px; }
+                    table.bitti_fs tr.bitti_fs_pareggio td { border-top: 1px dashed #444; padding-top: 3px; padding-bottom: 8px; }
+                    .bitti_fs_footer { font-size: 9px; }
+                </style>
+                    <div class="row">
+                        <div class="col-9">
+                            <div><strong><t t-out="header['printed_on']"/> - Azienda: <t t-out="header['company_name']"/></strong></div>
+                            <div>Cod. Fiscale <t t-out="header['codice_fiscale']"/>&#160;&#160;&#160;Partita IVA <t t-out="header['partita_iva']"/></div>
+                            <div><t t-out="header['address']"/></div>
+                        </div>
+                        <div class="col-3 text-end">
+                            <strong>Pag. <span class="page"/></strong>
+                        </div>
+                    </div>
+                    <div class="bitti_fs_title">SITUAZIONE CONTABILE A SEZIONI CONTRAPPOSTE</div>
+                    <div class="bitti_fs_period">
+                        PERIODO DAL <t t-out="header['date_from']"/> AL <t t-out="header['date_to']"/>
+                        <t t-if="header['only_posted_moves']"> - Solo registrazioni confermate</t>
+                    </div>
+                </div>
+
+                <div class="article">
+                <style>
+                    .bitti_fs_header { font-size: 11px; line-height: 1.3; }
+                    .bitti_fs_header .bitti_fs_title { font-size: 16px; font-weight: bold; text-align: center; margin: 8px 0 2px 0; }
+                    .bitti_fs_header .bitti_fs_period { text-align: center; font-size: 12px; margin-bottom: 4px; }
+                    table.bitti_fs { width: 100%; border-collapse: collapse; font-size: 10px; table-layout: fixed; }
+                    table.bitti_fs thead { display: table-header-group; }
+                    table.bitti_fs th { font-weight: normal; padding: 2px 3px; border-bottom: 1px solid #444; }
+                    table.bitti_fs th.bitti_fs_section { font-size: 12px; font-weight: bold; text-align: center; border-bottom: none; padding-top: 6px; }
+                    table.bitti_fs th.bitti_fs_side { font-size: 11px; font-weight: bold; text-align: left; border-bottom: 1px solid #444; }
+                    table.bitti_fs td { padding: 1.5px 3px; vertical-align: top; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+                    table.bitti_fs tr { page-break-inside: avoid; }
+                    table.bitti_fs .bitti_fs_sep { border-left: 1px solid #444; }
+                    table.bitti_fs .bitti_fs_amount { text-align: right; }
+                    table.bitti_fs .bitti_fs_group { font-weight: bold; }
+                    table.bitti_fs .bitti_fs_account { font-style: italic; }
+                    table.bitti_fs tr.bitti_fs_total td { border-top: 1px dashed #444; padding-top: 3px; padding-bottom: 3px; }
+                    table.bitti_fs tr.bitti_fs_result td { font-weight: bold; padding-top: 3px; padding-bottom: 3px; }
+                    table.bitti_fs tr.bitti_fs_pareggio td { border-top: 1px dashed #444; padding-top: 3px; padding-bottom: 8px; }
+                    .bitti_fs_footer { font-size: 9px; }
+                </style>
+                    <t t-foreach="sections" t-as="section">
+                        <div t-att-style="'page-break-before: always;' if section_index else ''">
+                            <table class="bitti_fs">
+                                <colgroup>
+                                    <col style="width: 9%;"/>
+                                    <col style="width: 30%;"/>
+                                    <col style="width: 11%;"/>
+                                    <col style="width: 9%;"/>
+                                    <col style="width: 30%;"/>
+                                    <col style="width: 11%;"/>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+                                        <th colspan="6" class="bitti_fs_section"><t t-out="section['title']"/></th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3" class="bitti_fs_side"><t t-out="section['left_col_name']"/></th>
+                                        <th colspan="3" class="bitti_fs_side bitti_fs_sep"><t t-out="section['right_col_name']"/></th>
+                                    </tr>
+                                    <tr>
+                                        <th>Codice</th>
+                                        <th>Descrizione</th>
+                                        <th class="bitti_fs_amount">Importo</th>
+                                        <th class="bitti_fs_sep">Codice</th>
+                                        <th>Descrizione</th>
+                                        <th class="bitti_fs_amount">Importo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="section['rows']" t-as="row">
+                                        <t t-set="left" t-value="row['left']"/>
+                                        <t t-set="right" t-value="row['right']"/>
+                                        <t t-if="left">
+                                            <td t-att-class="'bitti_fs_group' if left['is_group'] else 'bitti_fs_account'"><t t-out="left['code']"/></td>
+                                            <td t-att-class="'bitti_fs_group' if left['is_group'] else 'bitti_fs_account'"
+                                                t-att-style="'padding-left: %dpx;' % (3 + 6 * (left['level'] - 1))"><t t-out="left['name']"/></td>
+                                            <td t-att-class="'bitti_fs_amount ' + ('bitti_fs_group' if left['is_group'] else 'bitti_fs_account')"><t t-out="left['amount']"/></td>
+                                        </t>
+                                        <t t-else="">
+                                            <td/><td/><td/>
+                                        </t>
+                                        <t t-if="right">
+                                            <td t-att-class="'bitti_fs_sep ' + ('bitti_fs_group' if right['is_group'] else 'bitti_fs_account')"><t t-out="right['code']"/></td>
+                                            <td t-att-class="'bitti_fs_group' if right['is_group'] else 'bitti_fs_account'"
+                                                t-att-style="'padding-left: %dpx;' % (3 + 6 * (right['level'] - 1))"><t t-out="right['name']"/></td>
+                                            <td t-att-class="'bitti_fs_amount ' + ('bitti_fs_group' if right['is_group'] else 'bitti_fs_account')"><t t-out="right['amount']"/></td>
+                                        </t>
+                                        <t t-else="">
+                                            <td class="bitti_fs_sep"/><td/><td/>
+                                        </t>
+                                    </tr>
+                                    <tr class="bitti_fs_total">
+                                        <td/><td>TOTALE</td>
+                                        <td class="bitti_fs_amount"><t t-out="section['total_left']"/></td>
+                                        <td class="bitti_fs_sep"/><td>TOTALE</td>
+                                        <td class="bitti_fs_amount"><t t-out="section['total_right']"/></td>
+                                    </tr>
+                                    <t t-if="section['show_result']">
+                                        <tr class="bitti_fs_result">
+                                            <t t-if="section['result_side'] == 'left'">
+                                                <td/><td><t t-out="section['result_label']"/></td>
+                                                <td class="bitti_fs_amount"><t t-out="section['result_amount']"/></td>
+                                                <td class="bitti_fs_sep"/><td/><td/>
+                                            </t>
+                                            <t t-else="">
+                                                <td/><td/><td/>
+                                                <td class="bitti_fs_sep"/><td><t t-out="section['result_label']"/></td>
+                                                <td class="bitti_fs_amount"><t t-out="section['result_amount']"/></td>
+                                            </t>
+                                        </tr>
+                                        <tr class="bitti_fs_pareggio">
+                                            <t t-if="section['result_side'] == 'left'">
+                                                <td/><td>TOTALE A PAREGGIO</td>
+                                                <td class="bitti_fs_amount"><t t-out="section['pareggio_amount']"/></td>
+                                                <td class="bitti_fs_sep"/><td/><td/>
+                                            </t>
+                                            <t t-else="">
+                                                <td/><td/><td/>
+                                                <td class="bitti_fs_sep"/><td>TOTALE A PAREGGIO</td>
+                                                <td class="bitti_fs_amount"><t t-out="section['pareggio_amount']"/></td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </div>
+
+                <div class="footer bitti_fs_footer">
+                <style>
+                    .bitti_fs_header { font-size: 11px; line-height: 1.3; }
+                    .bitti_fs_header .bitti_fs_title { font-size: 16px; font-weight: bold; text-align: center; margin: 8px 0 2px 0; }
+                    .bitti_fs_header .bitti_fs_period { text-align: center; font-size: 12px; margin-bottom: 4px; }
+                    table.bitti_fs { width: 100%; border-collapse: collapse; font-size: 10px; table-layout: fixed; }
+                    table.bitti_fs thead { display: table-header-group; }
+                    table.bitti_fs th { font-weight: normal; padding: 2px 3px; border-bottom: 1px solid #444; }
+                    table.bitti_fs th.bitti_fs_section { font-size: 12px; font-weight: bold; text-align: center; border-bottom: none; padding-top: 6px; }
+                    table.bitti_fs th.bitti_fs_side { font-size: 11px; font-weight: bold; text-align: left; border-bottom: 1px solid #444; }
+                    table.bitti_fs td { padding: 1.5px 3px; vertical-align: top; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+                    table.bitti_fs tr { page-break-inside: avoid; }
+                    table.bitti_fs .bitti_fs_sep { border-left: 1px solid #444; }
+                    table.bitti_fs .bitti_fs_amount { text-align: right; }
+                    table.bitti_fs .bitti_fs_group { font-weight: bold; }
+                    table.bitti_fs .bitti_fs_account { font-style: italic; }
+                    table.bitti_fs tr.bitti_fs_total td { border-top: 1px dashed #444; padding-top: 3px; padding-bottom: 3px; }
+                    table.bitti_fs tr.bitti_fs_result td { font-weight: bold; padding-top: 3px; padding-bottom: 3px; }
+                    table.bitti_fs tr.bitti_fs_pareggio td { border-top: 1px dashed #444; padding-top: 3px; padding-bottom: 8px; }
+                    .bitti_fs_footer { font-size: 9px; }
+                </style>
+                    <div class="row">
+                        <div class="col-6"><t t-out="header['company_name']"/></div>
+                        <div class="col-6 text-end">Pagina <span class="page"/> / <span class="topage"/></div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_abc_update_ref_from_invoices" model="ir.actions.server">
+        <field name="name">Aggiorna riferimento da fatture</field>
+        <field name="model_id" ref="account.model_account_bank_statement_line"/>
+        <field name="binding_model_id" ref="account.model_account_bank_statement_line"/>
+        <field name="binding_view_types">list</field>
+        <field name="group_ids" eval="[(4, ref('account.group_account_user'))]"/>
+        <field name="state">code</field>
+        <field name="code">records.action_abc_update_ref_from_invoices()</field>
+    </record>
+</odoo>

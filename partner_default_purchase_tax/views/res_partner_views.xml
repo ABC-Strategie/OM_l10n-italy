@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_property_form_default_purchase_tax" model="ir.ui.view">
+        <field name="name">res.partner.form.default.purchase.tax</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <!-- Il campo viene collocato accanto alla Posizione fiscale,
+                 nella scheda contabile del contatto. -->
+            <field name="property_account_position_id" position="after">
+                <field name="property_purchase_tax_id"
+                       options="{'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

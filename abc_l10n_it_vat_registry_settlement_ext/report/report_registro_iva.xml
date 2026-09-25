@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template
+        id="report_registro_iva_ateco"
+        inherit_id="l10n_it_vat_registries.report_registro_iva"
+    >
+        <!-- Intestazione di gruppo: codice ATECO del giornale e, per i giornali
+             stampati in inversione contabile, prefisso "Reverse Charge". -->
+        <xpath expr="//h5[@t-esc='move.journal_id.name']" position="attributes">
+            <attribute
+                name="t-esc"
+            >('Reverse Charge - ' if move.journal_id.id in (data.get('rc_journal_ids') or []) else '') + move.journal_id.name + (' - ATECO ' + move.journal_id.ateco_code if move.journal_id.ateco_code else '')</attribute>
+        </xpath>
+        <!-- Righe in inversione contabile: si tratta di autofatture che Odoo 19
+             stampa come fatture di acquisto. In ragione sociale e P.IVA va
+             riportata l'azienda, emittente formale dell'autofattura. -->
+        <xpath expr="//t[@t-set='partner']" position="attributes">
+            <attribute
+                name="t-value"
+            >move.company_id.partner_id if move.journal_id.id in (data.get('rc_journal_ids') or []) else move.partner_id</attribute>
+        </xpath>
+    </template>
+</odoo>

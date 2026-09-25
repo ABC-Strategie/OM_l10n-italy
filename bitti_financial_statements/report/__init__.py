@@ -1,0 +1,3 @@
+# Copyright 2026 ABC Strategie
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+from . import financial_statements_full_report

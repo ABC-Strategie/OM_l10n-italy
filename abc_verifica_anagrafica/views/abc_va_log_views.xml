@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_abc_va_log_list" model="ir.ui.view">
+        <field name="name">abc.va.log.list</field>
+        <field name="model">abc.va.log</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0" default_order="timestamp desc">
+                <field name="timestamp"/>
+                <field name="partner_id"/>
+                <field name="value"/>
+                <field name="kind" optional="hide"/>
+                <field name="event"/>
+                <field name="result" widget="badge"
+                       decoration-success="result == 'valido'"
+                       decoration-danger="result == 'non_valido'"
+                       decoration-warning="result == 'errore'"/>
+                <field name="result_code"/>
+                <field name="message" optional="show"/>
+                <field name="http_status" optional="hide"/>
+                <field name="duration_ms" optional="show"/>
+                <field name="provider" optional="hide"/>
+                <field name="environment" optional="hide"/>
+                <field name="user_id" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_va_log_form" model="ir.ui.view">
+        <field name="name">abc.va.log.form</field>
+        <field name="model">abc.va.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="timestamp"/>
+                            <field name="partner_id"/>
+                            <field name="kind"/>
+                            <field name="value"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="event"/>
+                            <field name="result"/>
+                            <field name="result_code"/>
+                            <field name="http_status"/>
+                            <field name="duration_ms"/>
+                            <field name="provider"/>
+                            <field name="environment"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="message"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_va_log_search" model="ir.ui.view">
+        <field name="name">abc.va.log.search</field>
+        <field name="model">abc.va.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="value"/>
+                <field name="result_code"/>
+                <filter name="filter_api" string="Chiamate al provider" domain="[('event', '=', 'api')]"/>
+                <filter name="filter_throttle" string="Bloccate dal throttle" domain="[('event', '=', 'throttle')]"/>
+                <separator/>
+                <filter name="filter_valid" string="Valido" domain="[('result', '=', 'valido')]"/>
+                <filter name="filter_invalid" string="Non valido" domain="[('result', '=', 'non_valido')]"/>
+                <filter name="filter_error" string="Errore" domain="[('result', '=', 'errore')]"/>
+                <separator/>
+                <filter name="filter_today" string="Oggi"
+                        domain="[('timestamp', '>=', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0)))]"/>
+                <group>
+                    <filter name="group_event" string="Evento" context="{'group_by': 'event'}"/>
+                    <filter name="group_result" string="Esito" context="{'group_by': 'result'}"/>
+                    <filter name="group_partner" string="Contatto" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_day" string="Giorno" context="{'group_by': 'timestamp:day'}"/>
+                    <filter name="group_company" string="Società" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_abc_va_log" model="ir.actions.act_window">
+        <field name="name">Log verifiche</field>
+        <field name="res_model">abc.va.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_abc_va_log_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nessuna verifica registrata</p>
+            <p>Il log è di sola lettura e viene eliminato automaticamente in base alla retention configurata.</p>
+        </field>
+    </record>
+
+</odoo>

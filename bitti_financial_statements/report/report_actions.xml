@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_full_pdf" model="ir.actions.report">
+        <field name="name">Situazione contabile a sezioni contrapposte</field>
+        <field name="model">trial.balance.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bitti_financial_statements.report_full</field>
+        <field name="report_file">bitti_financial_statements.report_full</field>
+        <field name="print_report_name">'Situazione contabile a sezioni contrapposte'</field>
+        <field name="paperformat_id" ref="paperformat_bitti_financial_statements"/>
+    </record>
+
+    <record id="action_report_full_html" model="ir.actions.report">
+        <field name="name">Situazione contabile a sezioni contrapposte (HTML)</field>
+        <field name="model">trial.balance.report.wizard</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">bitti_financial_statements.report_full</field>
+        <field name="report_file">bitti_financial_statements.report_full</field>
+        <field name="paperformat_id" ref="paperformat_bitti_financial_statements"/>
+    </record>
+</odoo>

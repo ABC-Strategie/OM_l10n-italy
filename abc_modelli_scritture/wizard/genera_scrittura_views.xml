@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_abc_genera_form" model="ir.ui.view">
+        <field name="name">abc.modelli.scritture.genera.form</field>
+        <field name="model">abc.modelli.scritture.genera</field>
+        <field name="arch" type="xml">
+            <form string="Genera scrittura da modello">
+                <group>
+                    <group>
+                        <field name="template_id" invisible="1"/>
+                        <field name="data"/>
+                        <field name="journal_id"/>
+                        <field name="descrizione"/>
+                    </group>
+                    <group>
+                        <field name="totale_dare"/>
+                        <field name="totale_avere"/>
+                        <field name="sbilancio"
+                               decoration-danger="sbilancio != 0"
+                               decoration-success="sbilancio == 0"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                    </group>
+                </group>
+                <p class="text-muted">
+                    Inserisci gli importi del mese. Le righe lasciate a zero
+                    non verranno riportate nella scrittura.
+                </p>
+                <field name="line_ids">
+                    <list editable="bottom" decoration-warning="avviso_lato">
+                        <field name="sequence" widget="handle"/>
+                        <field name="account_id"/>
+                        <field name="partner_id" optional="hide"/>
+                        <field name="name"/>
+                        <field name="analytic_distribution" widget="analytic_distribution"
+                               optional="show"/>
+                        <field name="analytic_precision" column_invisible="1"/>
+                        <field name="dare"/>
+                        <field name="avere"/>
+                        <field name="avviso_lato" optional="show"/>
+                        <field name="currency_id" column_invisible="1"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_crea" type="object"
+                            string="Crea scrittura" class="btn-primary"/>
+                    <button string="Annulla" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Voce integrata nell'app Contabilità, dentro la sezione "Contabilità"
+         (account.menu_finance_entries), accanto alle Registrazioni. -->
+    <menuitem id="menu_abc_template"
+              name="Modelli di scrittura"
+              parent="account.menu_finance_entries"
+              action="action_abc_template"
+              sequence="90"/>
+
+</odoo>

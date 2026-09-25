@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form: badge di stato e pulsanti accanto al codice fiscale.
+         Si eredita direttamente dalla vista l10n_it_edi che aggiunge il
+         campo, così l'xpath lo trova indipendentemente dalle priorità
+         delle altre viste ereditate. -->
+    <record id="view_partner_form_abc_va" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.abc.va</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="l10n_it_edi.res_partner_form_l10n_it"/>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='l10n_it_codice_fiscale']" position="after">
+                <field name="abc_va_state" widget="badge"
+                       decoration-success="abc_va_state == 'valid'"
+                       decoration-danger="abc_va_state == 'invalid'"
+                       decoration-warning="abc_va_state == 'error'"
+                       decoration-info="abc_va_state == 'pending'"
+                       decoration-muted="abc_va_state in ('not_verified', 'not_applicable')"
+                       invisible="is_company or parent_id or not l10n_it_codice_fiscale"/>
+                <field name="abc_va_message"
+                       invisible="is_company or parent_id or not l10n_it_codice_fiscale or not abc_va_message"/>
+                <field name="abc_va_last_check"
+                       invisible="is_company or parent_id or not l10n_it_codice_fiscale or not abc_va_last_check"/>
+                <field name="abc_va_checked_value" invisible="1"/>
+                <div colspan="2" class="d-flex flex-wrap gap-3"
+                     invisible="is_company or parent_id or not l10n_it_codice_fiscale"
+                     groups="abc_verifica_anagrafica.group_abc_va_user">
+                    <button name="action_abc_va_verify_now" type="object"
+                            string="Verifica ora" class="btn btn-link p-0" icon="fa-refresh"
+                            invisible="abc_va_state == 'pending'"/>
+                    <button name="action_abc_va_verify_now" type="object"
+                            string="Forza ri-verifica" class="btn btn-link p-0 text-warning" icon="fa-repeat"
+                            context="{'abc_va_force': True}"
+                            groups="abc_verifica_anagrafica.group_abc_va_manager"
+                            invisible="abc_va_state in ('pending', 'not_verified')"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Form: partita IVA, badge e denominazione AdE accanto al campo vat -->
+    <record id="view_partner_form_abc_va_piva" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.abc.va.piva</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="abc_va_piva_state" widget="badge"
+                       decoration-success="abc_va_piva_state == 'valid'"
+                       decoration-danger="abc_va_piva_state in ('invalid', 'ceased')"
+                       decoration-warning="abc_va_piva_state == 'error'"
+                       decoration-info="abc_va_piva_state == 'pending'"
+                       decoration-muted="abc_va_piva_state in ('not_verified', 'not_applicable')"
+                       invisible="parent_id or not vat"/>
+                <field name="abc_va_piva_message"
+                       invisible="parent_id or not vat or not abc_va_piva_message"/>
+                <field name="abc_va_piva_denominazione"
+                       invisible="parent_id or not vat or not abc_va_piva_denominazione"/>
+                <field name="abc_va_piva_name_match" widget="badge"
+                       decoration-success="abc_va_piva_name_match == 'match'"
+                       decoration-danger="abc_va_piva_name_match == 'mismatch'"
+                       invisible="parent_id or not vat or not abc_va_piva_name_match"/>
+                <field name="abc_va_piva_end_date"
+                       invisible="parent_id or not vat or not abc_va_piva_end_date"/>
+                <field name="abc_va_piva_suspended_date"
+                       invisible="parent_id or not vat or not abc_va_piva_suspended_date"/>
+                <field name="abc_va_piva_last_check"
+                       invisible="parent_id or not vat or not abc_va_piva_last_check"/>
+                <field name="abc_va_piva_checked_value" invisible="1"/>
+                <div colspan="2" class="d-flex flex-wrap gap-3"
+                     invisible="parent_id or not vat"
+                     groups="abc_verifica_anagrafica.group_abc_va_user">
+                    <button name="action_abc_va_verify_now" type="object"
+                            string="Verifica P.IVA" class="btn btn-link p-0" icon="fa-refresh"
+                            context="{'abc_va_kind': 'piva'}"
+                            invisible="abc_va_piva_state == 'pending'"/>
+                    <button name="action_abc_va_verify_now" type="object"
+                            string="Forza ri-verifica P.IVA" class="btn btn-link p-0 text-warning" icon="fa-repeat"
+                            context="{'abc_va_kind': 'piva', 'abc_va_force': True}"
+                            groups="abc_verifica_anagrafica.group_abc_va_manager"
+                            invisible="abc_va_piva_state in ('pending', 'not_verified')"/>
+                    <button name="action_abc_va_align_name" type="object"
+                            string="Allinea nome alla denominazione AdE" class="btn btn-link p-0 text-danger" icon="fa-magic"
+                            invisible="abc_va_piva_name_match != 'mismatch'"
+                            confirm="Il nome del contatto verrà sostituito con la denominazione risultante all'Anagrafe Tributaria. Confermi?"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- List: colonna opzionale -->
+    <record id="view_partner_list_abc_va" model="ir.ui.view">
+        <field name="name">res.partner.list.inherit.abc.va</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='country_id']" position="after">
+                <field name="abc_va_state" optional="hide" widget="badge"
+                       decoration-success="abc_va_state == 'valid'"
+                       decoration-danger="abc_va_state == 'invalid'"
+                       decoration-warning="abc_va_state == 'error'"
+                       decoration-info="abc_va_state == 'pending'"/>
+                <field name="abc_va_piva_state" optional="hide" widget="badge"
+                       decoration-success="abc_va_piva_state == 'valid'"
+                       decoration-danger="abc_va_piva_state in ('invalid', 'ceased')"
+                       decoration-warning="abc_va_piva_state == 'error'"
+                       decoration-info="abc_va_piva_state == 'pending'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search: filtri per stato -->
+    <record id="view_res_partner_filter_abc_va" model="ir.ui.view">
+        <field name="name">res.partner.search.inherit.abc.va</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="abc_va_valid" string="CF valido"
+                        domain="[('abc_va_state', '=', 'valid')]"/>
+                <filter name="abc_va_invalid" string="CF non valido"
+                        domain="[('abc_va_state', '=', 'invalid')]"/>
+                <filter name="abc_va_pending" string="CF in attesa di verifica"
+                        domain="[('abc_va_state', '=', 'pending')]"/>
+                <filter name="abc_va_error" string="CF verifica in errore"
+                        domain="[('abc_va_state', '=', 'error')]"/>
+                <filter name="abc_va_not_verified" string="CF non verificato"
+                        domain="[('abc_va_state', '=', 'not_verified'), ('l10n_it_codice_fiscale', '!=', False), ('is_company', '=', False)]"/>
+                <separator/>
+                <filter name="abc_va_piva_valid" string="P.IVA valida"
+                        domain="[('abc_va_piva_state', '=', 'valid')]"/>
+                <filter name="abc_va_piva_ceased" string="P.IVA cessata/sospesa"
+                        domain="[('abc_va_piva_state', '=', 'ceased')]"/>
+                <filter name="abc_va_piva_invalid" string="P.IVA non valida"
+                        domain="[('abc_va_piva_state', '=', 'invalid')]"/>
+                <filter name="abc_va_piva_mismatch" string="Denominazione non corrispondente"
+                        domain="[('abc_va_piva_name_match', '=', 'mismatch')]"/>
+                <group>
+                    <filter name="abc_va_group_state" string="Verifica CF"
+                            context="{'group_by': 'abc_va_state'}"/>
+                    <filter name="abc_va_group_piva_state" string="Verifica P.IVA"
+                            context="{'group_by': 'abc_va_piva_state'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

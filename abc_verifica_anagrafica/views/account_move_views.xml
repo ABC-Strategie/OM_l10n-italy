@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Banner sulla fattura quando il codice fiscale del contatto risulta
+         non valido (policy 'warn' o 'block_document'). -->
+    <record id="view_move_form_abc_va" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.abc.va</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <field name="abc_va_partner_state" invisible="1"/>
+                <field name="abc_va_partner_piva_state" invisible="1"/>
+                <field name="abc_va_partner_piva_name_match" invisible="1"/>
+                <field name="abc_va_partner_piva_denominazione" invisible="1"/>
+                <field name="abc_va_on_invalid" invisible="1"/>
+                <field name="abc_va_on_ceased" invisible="1"/>
+                <field name="abc_va_piva_name_check" invisible="1"/>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_state != 'ceased' or abc_va_on_ceased != 'block_document' or state != 'draft'">
+                    La partita IVA del contatto risulta <strong>cessata o sospesa</strong> secondo l'Anagrafe Tributaria:
+                    la conferma del documento è bloccata.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_state != 'ceased' or abc_va_on_ceased != 'warn'">
+                    <strong>ATTENZIONE:</strong> La partita IVA del contatto risulta <strong>cessata o sospesa</strong> secondo l'Anagrafe Tributaria.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_state != 'invalid' or abc_va_on_invalid != 'block_document' or state != 'draft'">
+                    La partita IVA del contatto risulta <strong>non valida</strong> secondo l'ultima verifica anagrafica:
+                    la conferma del documento è bloccata.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_state != 'invalid' or abc_va_on_invalid != 'warn'">
+                    <strong>ATTENZIONE:</strong> La partita IVA del contatto risulta <strong>non valida</strong> secondo l'ultima verifica anagrafica.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_name_match != 'mismatch' or abc_va_piva_name_check != 'block' or state != 'draft'">
+                    Il nome del contatto <strong>non corrisponde</strong> alla denominazione risultante all'Anagrafe Tributaria
+                    (<field name="abc_va_partner_piva_denominazione" readonly="1" class="oe_inline"/>): la conferma del documento è bloccata.
+                    Allineare il nome dalla scheda del contatto.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_name_match != 'mismatch' or abc_va_piva_name_check != 'warn'">
+                    <strong>ATTENZIONE:</strong> Il nome del contatto <strong>non corrisponde</strong> alla denominazione risultante all'Anagrafe Tributaria
+                    (<field name="abc_va_partner_piva_denominazione" readonly="1" class="oe_inline"/>).
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_state != 'invalid' or abc_va_on_invalid != 'block_document' or state != 'draft'">
+                    Il codice fiscale del contatto risulta <strong>non valido</strong> secondo l'ultima verifica anagrafica:
+                    la conferma del documento è bloccata. Correggere il codice fiscale sulla scheda del contatto o richiedere una nuova verifica.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_state != 'invalid' or abc_va_on_invalid != 'warn'">
+                    <strong>ATTENZIONE:</strong> Il codice fiscale del contatto risulta <strong>non valido</strong> secondo l'ultima verifica anagrafica.
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

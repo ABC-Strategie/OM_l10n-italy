@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_abc_va" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.abc.va</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <block title="Verifica anagrafica tributaria" id="abc_va_block">
+
+                    <!-- Interruttore, provider, credenziali -->
+                    <setting id="abc_va_setting_main" string="Verifica dei codici fiscali"
+                             help="Verifica puntuale dei codici fiscali delle persone fisiche presso l'Agenzia delle Entrate. Nessuna verifica massiva: solo alla creazione o modifica del codice fiscale, su richiesta sul singolo contatto o all'uso effettivo del contatto.">
+                        <field name="abc_va_enabled"/>
+                        <div class="content-group mt16" invisible="not abc_va_enabled">
+                            <field name="abc_va_secret_days_left" invisible="1"/>
+                            <div class="alert alert-danger" role="alert"
+                                 invisible="not abc_va_secret_expiry or abc_va_secret_days_left >= 0">
+                                <strong>Client secret scaduto</strong> il <field name="abc_va_secret_expiry" readonly="1" class="oe_inline"/>:
+                                le verifiche sono sospese. Rigenerare il secret nel Catalogo dei servizi di interoperabilità AdE e inserirlo qui.
+                            </div>
+                            <div class="alert alert-warning" role="alert"
+                                 invisible="not abc_va_secret_expiry or abc_va_secret_days_left &lt; 0 or abc_va_secret_days_left &gt; 30">
+                                <strong>Client secret in scadenza</strong> tra <field name="abc_va_secret_days_left" readonly="1" class="oe_inline"/> giorni.
+                                Pianificare la rigenerazione nel Catalogo dei servizi di interoperabilità AdE.
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_provider" class="col-lg-4 o_light_label"/>
+                                <field name="abc_va_provider"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_environment" class="col-lg-4 o_light_label"/>
+                                <field name="abc_va_environment"/>
+                            </div>
+                            <div class="row" invisible="abc_va_environment != 'test'">
+                                <label for="abc_va_test_base_url" class="col-lg-4 o_light_label"/>
+                                <field name="abc_va_test_base_url" placeholder="https://..."/>
+                            </div>
+                            <div class="row" groups="abc_verifica_anagrafica.group_abc_va_manager">
+                                <label for="abc_va_client_id" class="col-lg-4 o_light_label"/>
+                                <field name="abc_va_client_id"/>
+                            </div>
+                            <div class="row" groups="abc_verifica_anagrafica.group_abc_va_manager">
+                                <label for="abc_va_client_secret" class="col-lg-4 o_light_label"/>
+                                <field name="abc_va_client_secret" widget="password"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_secret_expiry" class="col-lg-4 o_light_label"/>
+                                <field name="abc_va_secret_expiry"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_alert_user_id" class="col-lg-4 o_light_label"/>
+                                <field name="abc_va_alert_user_id"/>
+                            </div>
+                            <div class="mt8">
+                                <button name="action_abc_va_test_connection" type="object"
+                                        string="Test connessione" class="btn-link" icon="fa-plug"/>
+                                <span class="text-muted">(salvare prima le impostazioni)</span>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <!-- Limiti, cache, retention -->
+                    <setting id="abc_va_setting_limits" string="Limiti e conservazione"
+                             help="Limiti hard di chiamate al provider, riutilizzo dell'esito recente (anti-abuso) e retention dei log, in conformità alle Condizioni generali del servizio (art. 5 e art. 8).">
+                        <div class="content-group">
+                            <div class="row">
+                                <label for="abc_va_rate_minute" class="col-lg-6 o_light_label"/>
+                                <field name="abc_va_rate_minute"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_rate_day" class="col-lg-6 o_light_label"/>
+                                <field name="abc_va_rate_day"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_recheck_hours" class="col-lg-6 o_light_label"/>
+                                <field name="abc_va_recheck_hours"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_retention_months" class="col-lg-6 o_light_label"/>
+                                <field name="abc_va_retention_months"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <!-- Partita IVA -->
+                    <setting id="abc_va_setting_piva" string="Verifica delle partite IVA"
+                             help="Stesso servizio e stessi limiti del codice fiscale. Restituisce anche denominazione e date di cessazione o sospensione dell'attività.">
+                        <field name="abc_va_piva_enabled"/>
+                        <div class="content-group mt16" invisible="not abc_va_piva_enabled">
+                            <div class="row">
+                                <label for="abc_va_on_ceased" class="col-lg-6 o_light_label"/>
+                                <field name="abc_va_on_ceased"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_piva_name_check" class="col-lg-6 o_light_label"/>
+                                <field name="abc_va_piva_name_check"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <!-- Policy e inneschi -->
+                    <setting id="abc_va_setting_policy" string="Esito non valido e inneschi"
+                             help="Comportamento sui documenti verso soggetti con codice fiscale non valido e inneschi della verifica all'uso effettivo del contatto. Un errore tecnico del provider non blocca mai.">
+                        <div class="content-group">
+                            <div class="row">
+                                <label for="abc_va_on_invalid" class="col-lg-6 o_light_label"/>
+                                <field name="abc_va_on_invalid"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_va_name_check" class="col-lg-6 o_light_label"/>
+                                <field name="abc_va_name_check"/>
+                            </div>
+                            <div class="mt8">
+                                <field name="abc_va_trigger_on_invoice" class="oe_inline"/>
+                                <label for="abc_va_trigger_on_invoice"/>
+                            </div>
+                            <div>
+                                <field name="abc_va_trigger_on_sale" class="oe_inline"/>
+                                <label for="abc_va_trigger_on_sale"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_abc_va" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.abc.va</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <field name="abc_va_partner_state" invisible="1"/>
+                <field name="abc_va_partner_piva_state" invisible="1"/>
+                <field name="abc_va_partner_piva_name_match" invisible="1"/>
+                <field name="abc_va_partner_piva_denominazione" invisible="1"/>
+                <field name="abc_va_on_invalid" invisible="1"/>
+                <field name="abc_va_on_ceased" invisible="1"/>
+                <field name="abc_va_piva_name_check" invisible="1"/>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_state != 'ceased' or abc_va_on_ceased != 'block_document' or state not in ('draft', 'sent')">
+                    La partita IVA del cliente risulta <strong>cessata o sospesa</strong> secondo l'Anagrafe Tributaria:
+                    la conferma dell'ordine è bloccata.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_state != 'ceased' or abc_va_on_ceased != 'warn'">
+                    <strong>ATTENZIONE:</strong> La partita IVA del cliente risulta <strong>cessata o sospesa</strong> secondo l'Anagrafe Tributaria.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_state != 'invalid' or abc_va_on_invalid != 'block_document' or state not in ('draft', 'sent')">
+                    La partita IVA del cliente risulta <strong>non valida</strong> secondo l'ultima verifica anagrafica:
+                    la conferma dell'ordine è bloccata.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_state != 'invalid' or abc_va_on_invalid != 'warn'">
+                    <strong>ATTENZIONE:</strong> La partita IVA del cliente risulta <strong>non valida</strong> secondo l'ultima verifica anagrafica.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_name_match != 'mismatch' or abc_va_piva_name_check != 'block' or state not in ('draft', 'sent')">
+                    Il nome del cliente <strong>non corrisponde</strong> alla denominazione risultante all'Anagrafe Tributaria
+                    (<field name="abc_va_partner_piva_denominazione" readonly="1" class="oe_inline"/>): la conferma dell'ordine è bloccata.
+                    Allineare il nome dalla scheda del contatto.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_piva_name_match != 'mismatch' or abc_va_piva_name_check != 'warn'">
+                    <strong>ATTENZIONE:</strong> Il nome del cliente <strong>non corrisponde</strong> alla denominazione risultante all'Anagrafe Tributaria
+                    (<field name="abc_va_partner_piva_denominazione" readonly="1" class="oe_inline"/>).
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_state != 'invalid' or abc_va_on_invalid != 'block_document' or state not in ('draft', 'sent')">
+                    Il codice fiscale del cliente risulta <strong>non valido</strong> secondo l'ultima verifica anagrafica:
+                    la conferma dell'ordine è bloccata. Correggere il codice fiscale sulla scheda del contatto o richiedere una nuova verifica.
+                </div>
+                <div class="alert alert-danger mb-0" role="alert"
+                     invisible="abc_va_partner_state != 'invalid' or abc_va_on_invalid != 'warn'">
+                    <strong>ATTENZIONE:</strong> Il codice fiscale del cliente risulta <strong>non valido</strong> secondo l'ultima verifica anagrafica.
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

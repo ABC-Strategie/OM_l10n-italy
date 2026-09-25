@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_abc_va_queue_user,abc.va.queue user,model_abc_va_queue,abc_verifica_anagrafica.group_abc_va_user,1,0,0,0
+access_abc_va_queue_manager,abc.va.queue manager,model_abc_va_queue,abc_verifica_anagrafica.group_abc_va_manager,1,1,1,1
+access_abc_va_log_user,abc.va.log user,model_abc_va_log,abc_verifica_anagrafica.group_abc_va_user,1,0,0,0
+access_abc_va_log_manager,abc.va.log manager,model_abc_va_log,abc_verifica_anagrafica.group_abc_va_manager,1,0,0,0

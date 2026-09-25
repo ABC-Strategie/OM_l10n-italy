@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="remove_period_abc" model="ir.ui.view">
+        <field name="name">remove.period.from.vat.statement.form.abc</field>
+        <field name="model">remove.period.from.vat.statement</field>
+        <field
+            name="inherit_id"
+            ref="l10n_it_account_vat_period_end_settlement.remove_period"
+        />
+        <field name="arch" type="xml">
+            <field name="period_id" position="replace">
+                <field name="statement_id" invisible="1" />
+                <field
+                    name="date_range_id"
+                    required="1"
+                    options="{'no_create': True, 'no_open': True}"
+                />
+            </field>
+        </field>
+    </record>
+</odoo>
