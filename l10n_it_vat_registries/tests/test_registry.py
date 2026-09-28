@@ -13,11 +13,21 @@ class TestRegistry(TransactionCase):
         super().setUpClass()
 
         cls.test_date = fields.Date.today()
+        # Registro, conti e tassa della stessa azienda: sui database reali
+        # (es. copie di produzione) possono esserci piu aziende.
+        company = cls.env.company
         cls.journal = cls.env["account.journal"].search(
-            [("type", "=", "sale")], limit=1
+            [
+                *cls.env["account.journal"]._check_company_domain(company),
+                ("type", "=", "sale"),
+            ],
+            limit=1,
         )
         cls.ova = cls.env["account.account"].search(
-            [("account_type", "=", "asset_current")],
+            [
+                *cls.env["account.account"]._check_company_domain(company),
+                ("account_type", "=", "asset_current"),
+            ],
             limit=1,
         )
         cls.tax = cls.env["account.tax"].create(
@@ -25,6 +35,7 @@ class TestRegistry(TransactionCase):
                 "name": "Tax 10.0",
                 "amount": 10.0,
                 "amount_type": "fixed",
+                "company_id": company.id,
             }
         )
         cls.tax_registry = cls.env["account.tax.registry"].create(
@@ -38,15 +49,33 @@ class TestRegistry(TransactionCase):
         cls.invoice_line_account = (
             cls.env["account.account"]
             .search(
-                [("account_type", "=", "expense")],
+                [
+                    *cls.env["account.account"]._check_company_domain(company),
+                    ("account_type", "=", "expense"),
+                ],
                 limit=1,
             )
             .id
         )
 
+        # Cliente e prodotto vengono creati dal test: i dati dimostrativi non
+        # sono disponibili sui database reali (es. copie di produzione).
+        cls.partner = cls.env["res.partner"].create(
+            {
+                "name": "Cliente registro IVA",
+                "is_company": True,
+            }
+        )
+        cls.product = cls.env["product.product"].create(
+            {
+                "name": "Prodotto registro IVA",
+                "type": "consu",
+                "list_price": 100.0,
+            }
+        )
         cls.invoice = cls.env["account.move"].create(
             {
-                "partner_id": cls.env.ref("base.res_partner_2").id,
+                "partner_id": cls.partner.id,
                 "invoice_date": cls.test_date,
                 "move_type": "out_invoice",
                 "journal_id": cls.journal.id,
@@ -55,7 +84,7 @@ class TestRegistry(TransactionCase):
                         0,
                         None,
                         {
-                            "product_id": cls.env.ref("product.product_product_4").id,
+                            "product_id": cls.product.id,
                             "quantity": 1.0,
                             "price_unit": 100.0,
                             "name": "product that cost 100",
