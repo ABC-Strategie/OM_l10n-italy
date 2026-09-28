@@ -1,6 +1,6 @@
 {
     'name': 'Bitti - Situazione contabile a sezioni contrapposte',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Accounting/Localizations',
     'summary': 'Stato patrimoniale e Conto economico a sezioni contrapposte in un unico PDF',
     'description': """
