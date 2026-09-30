@@ -36,3 +36,14 @@ class ResPartner(models.Model):
              "Se valorizzato prevale sul conto del prodotto o della sua categoria. "
              "Lasciare vuoto per il comportamento standard.",
     )
+
+    def _abc_get_invoice_account(self, company, sale):
+        """Conto impostato sul contatto per un documento di vendita (sale=True) o di acquisto.
+
+        I campi sono company_dependent e le impostazioni contabili dei contatti figli sono
+        gestite sull'azienda madre: si legge dal commercial_partner_id.
+        """
+        partner = self.commercial_partner_id.with_company(company)
+        if sale:
+            return partner.abc_property_account_income_id
+        return partner.abc_property_account_expense_id

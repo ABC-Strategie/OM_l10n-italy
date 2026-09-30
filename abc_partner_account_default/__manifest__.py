@@ -16,8 +16,9 @@
     "author": "A.B.C. Srl",
     "website": "https://www.abcstrategie.it/",
     "category": "Accounting/Accounting",
-    "version": "19.0.1.0.0",
-    "depends": ["account"],
+    "version": "19.0.1.1.0",
+    # account_accountant: per estendere la previsione del conto da storico (_predict_specific_account).
+    "depends": ["account", "account_accountant"],
     "data": [
         "views/res_partner_views.xml",
     ],

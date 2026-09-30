@@ -9,8 +9,8 @@ Sul contatto, tab **Contabilità**, sezione *Generale*, subito sotto "Conto di d
 
 | Campo | Usato su |
 |---|---|
-| **Conto di ricavo** | Fatture e note di credito cliente (`out_invoice`, `out_refund`) |
-| **Conto di costo** | Fatture e note di credito fornitore (`in_invoice`, `in_refund`) |
+| **Conto di ricavo** | Fatture, note di credito e scontrini cliente (`out_invoice`, `out_refund`, `out_receipt`) |
+| **Conto di costo** | Fatture, note di credito e scontrini fornitore (`in_invoice`, `in_refund`, `in_receipt`) |
 
 Entrambi i campi sono visibili solo agli utenti del gruppo *Contabile*
 (`account.group_account_user`), come i due conti standard che li precedono.
@@ -18,7 +18,11 @@ Entrambi i campi sono visibili solo agli utenti del gruppo *Contabile*
 ## Comportamento
 
 - Se il conto è valorizzato sul contatto, **prevale** su quello del prodotto o della sua categoria,
-  su tutte le righe prodotto della fattura.
+  su tutte le righe prodotto della fattura, comprese quelle descrittive senza prodotto.
+- Prevale anche sul conto predefinito del registro e sul suggerimento di quick encoding che Odoo
+  propone sulle righe nuove aggiunte dalla fattura.
+- Prevale anche sul conto **previsto dallo storico** (account_accountant): quando si scrive la
+  descrizione di una riga fornitore senza prodotto, e nelle fatture importate da XML SdI o UBL/CII.
 - Se il campo è vuoto, il comportamento è quello standard di Odoo: nessun impatto.
 - Se sulla fattura è impostata una **posizione fiscale**, al conto del contatto viene applicata la
   stessa mappatura (`map_account`) che Odoo applica al conto del prodotto.
@@ -27,6 +31,8 @@ Entrambi i campi sono visibili solo agli utenti del gruppo *Contabile*
   dell'azienda madre, coerentemente con come Odoo gestisce le altre impostazioni contabili.
 - Il conto resta comunque modificabile a mano sulla singola riga; verrà però ricalcolato se cambia
   la fattura o il contatto.
+- Le fatture già create non si aggiornano quando si valorizza il conto sul contatto: su una bozza
+  il conto si aggiorna ricreando le righe o cambiando il contatto.
 
 ## Note tecniche
 
@@ -38,5 +44,16 @@ Entrambi i campi sono visibili solo agli utenti del gruppo *Contabile*
 - L'aggancio è un override di `account.move.line._compute_account_id` che chiama `super()` e
   sovrascrive solo dopo: non viene replicata la logica standard di Odoo, così eventuali modifiche
   del core restano valide.
-- Il `@api.depends` dell'override aggiunge `partner_id` a `move_id` (il core dipende dal solo
-  `move_id`), altrimenti cambiare cliente non farebbe ricalcolare il conto delle righe.
+- L'override dichiara `@api.depends("move_id", "partner_id")` (il core non dichiara dipendenze),
+  altrimenti cambiare cliente non farebbe ricalcolare il conto delle righe.
+- Sulle righe nuove il core di 19.0 mette in `account_id`, come default, il conto del registro
+  (`journal_id` nel contesto della vista) o quello di `quick_encoding_vals`. Con un default il
+  compute non parte, quindi l'override di `default_get` toglie `account_id` dai default quando il
+  contatto del contesto (`default_partner_id`) ha il conto per quel tipo di documento
+  (`default_move_type`, o in mancanza il tipo del registro). Prezzo e imposte suggeriti restano.
+- La previsione da storico di account_accountant assegna il conto direttamente, senza passare dal
+  compute: lo fanno l'onchange su `name` delle fatture fornitore, `_get_edi_creation`,
+  l'import SdI di l10n_it_edi (tramite `_predict_account`) e l'import UBL/CII di
+  account_edi_ubl_cii. Tutti passano da `_predict_specific_account`, che l'override fa restituire
+  l'id del conto del contatto quando è valorizzato. Per questo il modulo dipende da
+  `account_accountant`. La previsione delle imposte non viene toccata.

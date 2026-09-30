@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import Command
+from odoo import Command, fields
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
-from odoo.tests import tagged
+from odoo.tests import Form, tagged
 
 
 @tagged("post_install", "-at_install")
@@ -15,7 +15,7 @@ class TestAbcPartnerAccountDefault(AccountTestInvoicingCommon):
         cls.conto_ricavo_contatto = cls.copy_account(cls.company_data["default_account_revenue"])
         cls.conto_costo_contatto = cls.copy_account(cls.company_data["default_account_expense"])
 
-    def _crea_fattura(self, move_type, partner):
+    def _crea_fattura(self, move_type, partner, **valori):
         return self.env["account.move"].create({
             "move_type": move_type,
             "partner_id": partner.id,
@@ -27,7 +27,40 @@ class TestAbcPartnerAccountDefault(AccountTestInvoicingCommon):
                     "price_unit": 100.0,
                 }),
             ],
+            **valori,
         })
+
+    def _crea_fattura_da_form(self, move_type, partner, descrizione="Riga descrittiva"):
+        """Fattura con una riga descrittiva aggiunta come dall'interfaccia.
+
+        Form passa alle righe il contesto della vista (journal_id, default_partner_id), quindi
+        il core propone il conto predefinito del registro come default della riga nuova.
+        """
+        move_form = Form(self.env["account.move"].with_context(default_move_type=move_type))
+        move_form.partner_id = partner
+        move_form.invoice_date = fields.Date.from_string("2026-01-15")
+        with move_form.invoice_line_ids.new() as line_form:
+            line_form.name = descrizione
+            line_form.price_unit = 100.0
+        return move_form.save()
+
+    def _registra_fattura_fornitore_storica(self, descrizione, conto):
+        """Fattura fornitore registrata: e' lo storico da cui account_accountant prevede il conto."""
+        fattura = self.env["account.move"].create({
+            "move_type": "in_invoice",
+            "partner_id": self.partner_a.id,
+            "invoice_date": "2026-01-10",
+            "invoice_line_ids": [
+                Command.create({
+                    "name": descrizione,
+                    "account_id": conto.id,
+                    "quantity": 1,
+                    "price_unit": 100.0,
+                }),
+            ],
+        })
+        fattura.action_post()
+        return fattura
 
     # -------------------------------------------------------------------------
 
@@ -112,3 +145,68 @@ class TestAbcPartnerAccountDefault(AccountTestInvoicingCommon):
             ],
         })
         self.assertEqual(fattura.invoice_line_ids.account_id, self.conto_ricavo_contatto)
+
+    def test_riga_nuova_da_form_fattura_cliente(self):
+        """Riga aggiunta dall'interfaccia: il conto del contatto prevale sul default del registro."""
+        self.partner_a.abc_property_account_income_id = self.conto_ricavo_contatto
+        fattura = self._crea_fattura_da_form("out_invoice", self.partner_a)
+        self.assertEqual(fattura.invoice_line_ids.account_id, self.conto_ricavo_contatto)
+
+    def test_riga_nuova_da_form_fattura_fornitore(self):
+        """Riga aggiunta dall'interfaccia su fattura fornitore: vale il conto di costo del contatto."""
+        self.partner_a.abc_property_account_expense_id = self.conto_costo_contatto
+        fattura = self._crea_fattura_da_form("in_invoice", self.partner_a)
+        self.assertEqual(fattura.invoice_line_ids.account_id, self.conto_costo_contatto)
+
+    def test_riga_nuova_da_form_senza_conti_resta_lo_standard(self):
+        """Contatto senza conti: la riga nuova tiene il conto predefinito del registro."""
+        fattura = self._crea_fattura_da_form("out_invoice", self.partner_a)
+        self.assertEqual(
+            fattura.invoice_line_ids.account_id,
+            fattura.journal_id.default_account_id,
+        )
+
+    def test_posizione_fiscale_mappa_il_conto_del_contatto(self):
+        """Al conto del contatto si applica la mappatura della posizione fiscale della fattura."""
+        conto_mappato = self.copy_account(self.company_data["default_account_revenue"])
+        posizione_fiscale = self.env["account.fiscal.position"].create({
+            "name": "Posizione fiscale test",
+            "account_ids": [Command.create({
+                "account_src_id": self.conto_ricavo_contatto.id,
+                "account_dest_id": conto_mappato.id,
+            })],
+        })
+        self.partner_a.abc_property_account_income_id = self.conto_ricavo_contatto
+        fattura = self._crea_fattura(
+            "out_invoice", self.partner_a, fiscal_position_id=posizione_fiscale.id,
+        )
+        self.assertEqual(fattura.invoice_line_ids.account_id, conto_mappato)
+
+    def test_previsione_da_storico_non_scavalca_conto_contatto(self):
+        """Fattura fornitore: scrivendo la descrizione, la previsione da storico non vince sul contatto."""
+        descrizione = "Canone mensile consulenza direzionale"
+        conto_storico = self.copy_account(self.company_data["default_account_expense"])
+        self._registra_fattura_fornitore_storica(descrizione, conto_storico)
+
+        # Senza conto sul contatto la previsione e' attiva e propone il conto dello storico.
+        fattura = self._crea_fattura_da_form("in_invoice", self.partner_a, descrizione)
+        self.assertEqual(fattura.invoice_line_ids.account_id, conto_storico)
+
+        self.partner_a.abc_property_account_expense_id = self.conto_costo_contatto
+        fattura = self._crea_fattura_da_form("in_invoice", self.partner_a, descrizione)
+        self.assertEqual(fattura.invoice_line_ids.account_id, self.conto_costo_contatto)
+
+    def test_previsione_per_import_restituisce_conto_contatto(self):
+        """Il metodo usato dagli import SdI e UBL restituisce l'id del conto del contatto."""
+        descrizione = "Canone mensile consulenza direzionale"
+        conto_storico = self.copy_account(self.company_data["default_account_expense"])
+        self._registra_fattura_fornitore_storica(descrizione, conto_storico)
+        self.partner_a.abc_property_account_expense_id = self.conto_costo_contatto
+        bozza = self.env["account.move"].create({
+            "move_type": "in_invoice",
+            "partner_id": self.partner_a.id,
+        })
+        previsto = self.env["account.move.line"]._predict_specific_account(
+            bozza, descrizione, self.partner_a,
+        )
+        self.assertEqual(previsto, self.conto_costo_contatto.id)
