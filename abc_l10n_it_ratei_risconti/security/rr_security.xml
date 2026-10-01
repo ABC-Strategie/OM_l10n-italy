@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rule_abc_rr_run_company" model="ir.rule">
+        <field name="name">Elaborazioni ratei e risconti: multi-societa</field>
+        <field name="model_id" ref="model_abc_rr_run"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_abc_rr_run_line_company" model="ir.rule">
+        <field name="name">Righe ratei e risconti: multi-societa</field>
+        <field name="model_id" ref="model_abc_rr_run_line"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_abc_rr_card_company" model="ir.rule">
+        <field name="name">Schede ratei e risconti: multi-societa</field>
+        <field name="model_id" ref="model_abc_rr_card"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_abc_rr_account_map_company" model="ir.rule">
+        <field name="name">Eccezioni conti ratei e risconti: multi-societa</field>
+        <field name="model_id" ref="model_abc_rr_account_map"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_abc_rr_report_line_company" model="ir.rule">
+        <field name="name">Report ratei e risconti: multi-societa</field>
+        <field name="model_id" ref="model_abc_rr_report_line"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

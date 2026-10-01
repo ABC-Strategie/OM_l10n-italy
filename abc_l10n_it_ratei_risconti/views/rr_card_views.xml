@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rr_card_list" model="ir.ui.view">
+        <field name="name">abc.rr.card.list</field>
+        <field name="model">abc.rr.card</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'closed'" decoration-info="state == 'draft'">
+                <field name="name"/>
+                <field name="card_type"/>
+                <field name="rr_type"/>
+                <field name="partner_id" optional="show"/>
+                <field name="account_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="amount" sum="Totale"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'" decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rr_card_form" model="ir.ui.view">
+        <field name="name">abc.rr.card.form</field>
+        <field name="model">abc.rr.card</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_activate" type="object" string="Attiva" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_generate_legacy_storno" type="object" string="Registra storno di apertura"
+                            invisible="card_type != 'legacy' or legacy_storno_done or state == 'draft'"
+                            confirm="Viene registrato lo storno del rateo/risconto del vecchio gestionale al giorno successivo alla sua chiusura. Procedere?"/>
+                    <button name="action_close" type="object" string="Chiudi" invisible="state != 'active'"/>
+                    <button name="action_draft" type="object" string="Riporta in bozza" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="es. Interessi mutuo 2 semestre"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="card_type"/>
+                            <field name="rr_type"/>
+                            <field name="partner_id"/>
+                            <field name="account_id"/>
+                            <field name="rr_account_id"/>
+                            <field name="analytic_precision" invisible="1"/>
+                            <field name="analytic_distribution" widget="analytic_distribution"
+                                   groups="analytic.group_analytic_accounting"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="tax_date_start"/>
+                            <field name="tax_date_end"/>
+                        </group>
+                    </group>
+                    <group string="Pregresso" invisible="card_type != 'legacy'">
+                        <group>
+                            <field name="legacy_closing_date" required="card_type == 'legacy'"/>
+                            <field name="legacy_amount" required="card_type == 'legacy'"/>
+                        </group>
+                        <group>
+                            <field name="legacy_storno_done"/>
+                            <field name="legacy_storno_move_id" invisible="not legacy_storno_move_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Elaborazioni" name="runs">
+                            <field name="run_line_ids" readonly="1">
+                                <list>
+                                    <field name="closing_date"/>
+                                    <field name="run_id"/>
+                                    <field name="run_state"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="amount"/>
+                                    <field name="excluded"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Note" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_rr_card_search" model="ir.ui.view">
+        <field name="name">abc.rr.card.search</field>
+        <field name="model">abc.rr.card</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="account_id"/>
+                <filter name="active_cards" string="Attive" domain="[('state', '=', 'active')]"/>
+                <filter name="legacy" string="Pregresso" domain="[('card_type', '=', 'legacy')]"/>
+                <separator/>
+                <filter name="group_type" string="Tipologia" context="{'group_by': 'rr_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_rr_card" model="ir.actions.act_window">
+        <field name="name">Schede ratei e risconti</field>
+        <field name="res_model">abc.rr.card</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nessuna scheda</p>
+            <p>Le schede servono per ratei senza documento, leasing, stime e per il pregresso del vecchio gestionale.
+               Si possono importare anche da Excel.</p>
+        </field>
+    </record>
+</odoo>

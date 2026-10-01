@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_abc_rr_root" name="Ratei e risconti"
+              parent="account.menu_finance_entries" sequence="25"
+              groups="account.group_account_readonly,account.group_account_user"/>
+    <menuitem id="menu_abc_rr_wizard" name="Elabora" parent="menu_abc_rr_root"
+              action="action_rr_run_wizard" sequence="10" groups="account.group_account_user"/>
+    <menuitem id="menu_abc_rr_run" name="Elaborazioni" parent="menu_abc_rr_root"
+              action="action_rr_run" sequence="20"/>
+    <menuitem id="menu_abc_rr_card" name="Schede" parent="menu_abc_rr_root"
+              action="action_rr_card" sequence="30"/>
+    <menuitem id="menu_abc_rr_line" name="Prospetto" parent="menu_abc_rr_root"
+              action="action_rr_run_line" sequence="40"/>
+    <menuitem id="menu_abc_rr_report" name="Pluriennali, leasing e quadratura" parent="menu_abc_rr_root"
+              action="action_rr_report_wizard" sequence="50"/>
+
+    <menuitem id="menu_abc_rr_account_map" name="Eccezioni conti ratei e risconti"
+              parent="account.account_account_menu" action="action_rr_account_map" sequence="90"
+              groups="account.group_account_manager"/>
+</odoo>

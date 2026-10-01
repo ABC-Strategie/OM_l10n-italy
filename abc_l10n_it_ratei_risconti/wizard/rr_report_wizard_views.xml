@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rr_report_wizard_form" model="ir.ui.view">
+        <field name="name">abc.rr.report.wizard.form</field>
+        <field name="model">abc.rr.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Report ratei e risconti">
+                <group>
+                    <field name="mode" widget="radio"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="closing_date"/>
+                    <field name="include_draft"/>
+                </group>
+                <footer>
+                    <button name="action_open" type="object" string="Apri" class="btn-primary"/>
+                    <button special="cancel" string="Annulla"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rr_report_wizard" model="ir.actions.act_window">
+        <field name="name">Report ratei e risconti</field>
+        <field name="res_model">abc.rr.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

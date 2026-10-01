@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_abc_rr_run_readonly,abc.rr.run.readonly,model_abc_rr_run,account.group_account_readonly,1,0,0,0
+access_abc_rr_run_user,abc.rr.run.user,model_abc_rr_run,account.group_account_user,1,1,1,0
+access_abc_rr_run_manager,abc.rr.run.manager,model_abc_rr_run,account.group_account_manager,1,1,1,1
+access_abc_rr_run_line_readonly,abc.rr.run.line.readonly,model_abc_rr_run_line,account.group_account_readonly,1,0,0,0
+access_abc_rr_run_line_user,abc.rr.run.line.user,model_abc_rr_run_line,account.group_account_user,1,1,1,1
+access_abc_rr_card_readonly,abc.rr.card.readonly,model_abc_rr_card,account.group_account_readonly,1,0,0,0
+access_abc_rr_card_user,abc.rr.card.user,model_abc_rr_card,account.group_account_user,1,1,1,0
+access_abc_rr_card_manager,abc.rr.card.manager,model_abc_rr_card,account.group_account_manager,1,1,1,1
+access_abc_rr_account_map_readonly,abc.rr.account.map.readonly,model_abc_rr_account_map,account.group_account_readonly,1,0,0,0
+access_abc_rr_account_map_manager,abc.rr.account.map.manager,model_abc_rr_account_map,account.group_account_manager,1,1,1,1
+access_abc_rr_run_wizard_user,abc.rr.run.wizard.user,model_abc_rr_run_wizard,account.group_account_user,1,1,1,1
+access_abc_rr_report_wizard_readonly,abc.rr.report.wizard.readonly,model_abc_rr_report_wizard,account.group_account_readonly,1,1,1,1
+access_abc_rr_report_line_readonly,abc.rr.report.line.readonly,model_abc_rr_report_line,account.group_account_readonly,1,1,1,1
+access_abc_rr_prospetto_wizard_readonly,abc.rr.prospetto.wizard.readonly,model_abc_rr_prospetto_wizard,account.group_account_readonly,1,1,1,1

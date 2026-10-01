@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_rr_landscape" model="report.paperformat">
+        <field name="name">A4 orizzontale - Ratei e risconti</field>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">72</field>
+        <field name="margin_bottom">25</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">64</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_rr_prospetto" model="ir.actions.report">
+        <field name="name">Prospetto ratei e risconti (orizzontale)</field>
+        <field name="model">abc.rr.run.line</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">abc_l10n_it_ratei_risconti.report_rr_prospetto</field>
+        <field name="report_file">abc_l10n_it_ratei_risconti.report_rr_prospetto</field>
+        <field name="print_report_name">'Prospetto ratei e risconti'</field>
+        <field name="paperformat_id" ref="paperformat_rr_landscape"/>
+    </record>
+
+    <template id="report_rr_prospetto">
+        <t t-call="web.html_container">
+            <t t-set="o" t-value="docs[:1]"/>
+            <t t-set="company" t-value="docs[:1].company_id or res_company"/>
+            <t t-set="cur" t-value="{'widget': 'monetary', 'display_currency': company.currency_id}"/>
+            <t t-set="groups" t-value="docs.get_prospetto_groups()"/>
+            <t t-call="web.external_layout">
+                <div class="page" style="font-size: 7.5pt;">
+                    <style>
+                        table.rr-p { width: 100%; border-collapse: collapse; }
+                        table.rr-p th, table.rr-p td { padding: 2px 3px; vertical-align: top; }
+                        table.rr-p thead { display: table-header-group; }
+                        table.rr-p thead th { background-color: #2B3A8C !important; color: #ffffff !important; font-weight: bold; border: 1px solid #2B3A8C; }
+                        table.rr-p tr.rr-det td { border-bottom: 1px solid #dddddd; }
+                        table.rr-p tr.rr-g1 td { background-color: #C9D0EE !important; font-weight: bold; }
+                        table.rr-p tr.rr-g2 td { background-color: #E4E8F7 !important; font-weight: bold; }
+                        table.rr-p tr.rr-g3 td { background-color: #F3F4FA !important; font-style: italic; }
+                        table.rr-p .num { text-align: right; white-space: nowrap; }
+                        table.rr-p .nw { white-space: nowrap; }
+                    </style>
+                    <h5 style="color: #2B3A8C;">Prospetto ratei e risconti</h5>
+                    <table class="rr-p">
+                        <thead>
+                            <tr>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Elaboraz.</th>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Conto rateo/risconto</th>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Conto costo/ricavo</th>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Partner</th>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Documento</th>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Data doc.</th>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Descrizione</th>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Inizio</th>
+                                <th style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Fine</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Gg tot.</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Gg comp. esercizio</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Gg r/r</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Imponibile</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Competenza esercizio</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Rateo/Risconto alla data</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Entro 12m</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Oltre 12m</th>
+                                <th class="num" style="background-color: #2B3A8C; color: #ffffff; font-weight: bold; -webkit-print-color-adjust: exact;">Oltre 5a</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="groups" t-as="g">
+                                <tr class="rr-g1">
+                                    <td colspan="18">Data di chiusura&#160;<span t-out="g['closing_date']" t-options="{'widget': 'date'}"/> (<t t-out="g['count']"/> <t t-out="'riga' if g['count'] == 1 else 'righe'"/>)</td>
+                                </tr>
+                                <t t-foreach="g['types']" t-as="tp">
+                                    <tr class="rr-g2">
+                                        <td colspan="18"><t t-out="tp['label']"/> (<t t-out="tp['count']"/> <t t-out="'riga' if tp['count'] == 1 else 'righe'"/>)</td>
+                                    </tr>
+                                    <t t-foreach="tp['accounts']" t-as="acc">
+                                        <tr t-foreach="acc['rows']" t-as="row" class="rr-det">
+                                            <t t-set="line" t-value="row['line']"/>
+                                            <td class="nw"><span t-out="line.run_id.name"/></td>
+                                            <td><span t-out="line.rr_account_id.display_name"/></td>
+                                            <td><span t-out="line.account_id.display_name"/></td>
+                                            <td><span t-out="line.partner_id.display_name or ''"/></td>
+                                            <td class="nw"><span t-out="line.move_id.name or line.card_id.name or ''"/></td>
+                                            <td class="nw"><span t-field="line.move_date"/></td>
+                                            <td>
+                                                <span t-out="line.name"/>
+                                                <t t-if="line.edit_note"><br/><i t-out="line.edit_note"/></t>
+                                            </td>
+                                            <td class="nw"><span t-field="line.date_start"/></td>
+                                            <td class="nw"><span t-field="line.date_end"/></td>
+                                            <td class="num" t-out="line.days_total"/>
+                                            <td class="num" t-out="line.days_competence"/>
+                                            <td class="num" t-out="line.days_rr"/>
+                                            <td class="num" t-out="row['base']" t-options="cur"/>
+                                            <td class="num" t-out="row['competence']" t-options="cur"/>
+                                            <td class="num" t-out="row['amount']" t-options="cur"/>
+                                            <td class="num" t-out="row['within']" t-options="cur"/>
+                                            <td class="num" t-out="row['beyond']" t-options="cur"/>
+                                            <td class="num" t-out="row['beyond_5y']" t-options="cur"/>
+                                        </tr>
+                                        <tr class="rr-g3">
+                                            <td colspan="12">Totale conto <t t-out="acc['account'].display_name or '-'"/></td>
+                                            <td class="num" t-out="acc['totals']['base']" t-options="cur"/>
+                                            <td class="num" t-out="acc['totals']['competence']" t-options="cur"/>
+                                            <td class="num" t-out="acc['totals']['amount']" t-options="cur"/>
+                                            <td class="num" t-out="acc['totals']['within']" t-options="cur"/>
+                                            <td class="num" t-out="acc['totals']['beyond']" t-options="cur"/>
+                                            <td class="num" t-out="acc['totals']['beyond_5y']" t-options="cur"/>
+                                        </tr>
+                                    </t>
+                                    <tr class="rr-g2">
+                                        <td colspan="12">Totale <t t-out="tp['label']"/></td>
+                                        <td class="num" t-out="tp['totals']['base']" t-options="cur"/>
+                                        <td class="num" t-out="tp['totals']['competence']" t-options="cur"/>
+                                        <td class="num" t-out="tp['totals']['amount']" t-options="cur"/>
+                                        <td class="num" t-out="tp['totals']['within']" t-options="cur"/>
+                                        <td class="num" t-out="tp['totals']['beyond']" t-options="cur"/>
+                                        <td class="num" t-out="tp['totals']['beyond_5y']" t-options="cur"/>
+                                    </tr>
+                                </t>
+                                <tr class="rr-g1">
+                                    <td colspan="12">Totale al&#160;<span t-out="g['closing_date']" t-options="{'widget': 'date'}"/></td>
+                                    <td class="num" t-out="g['totals']['base']" t-options="cur"/>
+                                    <td class="num" t-out="g['totals']['competence']" t-options="cur"/>
+                                    <td class="num" t-out="g['totals']['amount']" t-options="cur"/>
+                                    <td class="num" t-out="g['totals']['within']" t-options="cur"/>
+                                    <td class="num" t-out="g['totals']['beyond']" t-options="cur"/>
+                                    <td class="num" t-out="g['totals']['beyond_5y']" t-options="cur"/>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <p class="text-muted mt-2">Importi esposti in positivo, come nelle voci D ed E dello Stato Patrimoniale.
+                        Competenza esercizio = parte dell'imponibile che cade nell'esercizio chiuso alla data. Imponibile e competenza delle righe di rettifica sono pari a zero.</p>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

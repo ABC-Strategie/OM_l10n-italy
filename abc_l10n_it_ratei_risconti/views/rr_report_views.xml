@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rr_report_line_list_multi" model="ir.ui.view">
+        <field name="name">abc.rr.report.line.list.multi</field>
+        <field name="model">abc.rr.report.line</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="fy_end"/>
+                <field name="rr_type"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="account_id"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="civil_amount" string="Quota che si riversa" sum="Totale"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rr_report_line_list_leasing" model="ir.ui.view">
+        <field name="name">abc.rr.report.line.list.leasing</field>
+        <field name="model">abc.rr.report.line</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="name"/>
+                <field name="fy_end"/>
+                <field name="partner_id"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="civil_amount" sum="Totale"/>
+                <field name="tax_amount" sum="Totale"/>
+                <field name="difference" sum="Totale"/>
+                <field name="cumulative"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rr_report_line_list_check" model="ir.ui.view">
+        <field name="name">abc.rr.report.line.list.check</field>
+        <field name="model">abc.rr.report.line</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0" decoration-danger="difference != 0" decoration-success="difference == 0">
+                <field name="account_id"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="book_balance" sum="Totale"/>
+                <field name="run_balance" sum="Totale"/>
+                <field name="difference" sum="Totale"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rr_report_line_search" model="ir.ui.view">
+        <field name="name">abc.rr.report.line.search</field>
+        <field name="model">abc.rr.report.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="account_id"/>
+                <filter name="group_fy" string="Esercizio" context="{'group_by': 'fy_end'}"/>
+                <filter name="group_name" string="Descrizione" context="{'group_by': 'name'}"/>
+                <filter name="group_type" string="Tipologia" context="{'group_by': 'rr_type'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_rr_report_line_pivot" model="ir.ui.view">
+        <field name="name">abc.rr.report.line.pivot</field>
+        <field name="model">abc.rr.report.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Report ratei e risconti">
+                <field name="name" type="row"/>
+                <field name="fy_end" type="col" interval="year"/>
+                <field name="civil_amount" type="measure"/>
+                <field name="tax_amount" type="measure"/>
+                <field name="difference" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+</odoo>

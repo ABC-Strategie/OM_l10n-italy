@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_rr_run" model="ir.actions.report">
+        <field name="name">Prospetto ratei e risconti</field>
+        <field name="model">abc.rr.run</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">abc_l10n_it_ratei_risconti.report_rr_run</field>
+        <field name="report_file">abc_l10n_it_ratei_risconti.report_rr_run</field>
+        <field name="print_report_name">'Ratei e risconti %s' % object.name</field>
+        <field name="binding_model_id" ref="model_abc_rr_run"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <template id="report_rr_run">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="run">
+                <t t-call="web.external_layout">
+                    <t t-set="company" t-value="run.company_id"/>
+                    <t t-set="cur" t-value="{'widget': 'monetary', 'display_currency': run.currency_id}"/>
+                    <div class="page" style="font-size: 9pt;">
+                        <h4>Prospetto ratei e risconti al <span t-field="run.closing_date"/></h4>
+                        <p>
+                            Elaborazione <span t-field="run.name"/> (<span t-field="run.run_type"/>),
+                            stato: <span t-field="run.state"/>
+                            <t t-if="run.move_id">; scrittura <span t-field="run.move_id.name"/>, storno <span t-field="run.reverse_move_id.name"/></t>
+                        </p>
+                        <t t-foreach="run.get_report_groups()" t-as="grp">
+                            <h5 class="mt-3" t-out="grp['label']"/>
+                            <table class="table table-sm table-borderless" style="border-bottom: 1px solid #999;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #999;">
+                                        <th>Conto</th>
+                                        <th>Descrizione / documento</th>
+                                        <th>Partner</th>
+                                        <th>Periodo</th>
+                                        <th class="text-end">Gg tot.</th>
+                                        <th class="text-end">Gg comp. esercizio</th>
+                                        <th class="text-end">Gg r/r</th>
+                                        <th class="text-end">Imponibile</th>
+                                        <th class="text-end">Competenza esercizio</th>
+                                        <th class="text-end">Rateo/Risconto alla data</th>
+                                        <th class="text-end">Entro 12m</th>
+                                        <th class="text-end">Oltre 12m</th>
+                                        <th class="text-end">Oltre 5a</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="grp['rows']" t-as="row">
+                                        <t t-set="line" t-value="row['line']"/>
+                                        <tr>
+                                            <td><span t-out="line.rr_account_id.code"/></td>
+                                            <td>
+                                                <span t-out="line.name"/>
+                                                <t t-if="line.move_id"><br/><small t-out="line.move_id.name"/></t>
+                                                <t t-if="line.edit_note"><br/><small><i t-out="line.edit_note"/></small></t>
+                                            </td>
+                                            <td><span t-out="line.partner_id.name or ''"/></td>
+                                            <td><span t-field="line.date_start"/> - <span t-field="line.date_end"/></td>
+                                            <td class="text-end" t-out="line.days_total"/>
+                                            <td class="text-end" t-out="line.days_competence"/>
+                                            <td class="text-end" t-out="line.days_rr"/>
+                                            <td class="text-end" t-out="row['base']" t-options="cur"/>
+                                            <td class="text-end" t-out="row['competence']" t-options="cur"/>
+                                            <td class="text-end" t-out="row['amount']" t-options="cur"/>
+                                            <td class="text-end" t-out="row['within']" t-options="cur"/>
+                                            <td class="text-end" t-out="row['beyond']" t-options="cur"/>
+                                            <td class="text-end" t-out="row['beyond_5y']" t-options="cur"/>
+                                        </tr>
+                                    </t>
+                                    <tr style="border-top: 1px solid #999; font-weight: bold;">
+                                        <td colspan="9">Totale <t t-out="grp['label']"/></td>
+                                        <td class="text-end" t-out="grp['totals']['amount']" t-options="cur"/>
+                                        <td class="text-end" t-out="grp['totals']['within']" t-options="cur"/>
+                                        <td class="text-end" t-out="grp['totals']['beyond']" t-options="cur"/>
+                                        <td class="text-end" t-out="grp['totals']['beyond_5y']" t-options="cur"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

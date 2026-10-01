@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rr_run_wizard_form" model="ir.ui.view">
+        <field name="name">abc.rr.run.wizard.form</field>
+        <field name="model">abc.rr.run.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Elabora ratei e risconti">
+                <group>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="closing_date"/>
+                    <field name="pending_count"/>
+                    <field name="existing_info" string="Elaborazioni esistenti" invisible="not existing_info"/>
+                </group>
+                <p class="text-muted">
+                    Il calcolo crea un'elaborazione in bozza: nessuna scrittura viene registrata finche' non si conferma.
+                    Se per la data esiste gia' un'elaborazione confermata, la nuova e' integrativa e propone solo
+                    le righe nuove o cambiate.
+                </p>
+                <footer>
+                    <button name="action_create" type="object" string="Calcola" class="btn-primary"/>
+                    <button special="cancel" string="Annulla"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rr_run_wizard" model="ir.actions.act_window">
+        <field name="name">Elabora ratei e risconti</field>
+        <field name="res_model">abc.rr.run.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

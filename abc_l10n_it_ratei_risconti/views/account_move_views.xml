@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_abc_rr" model="ir.ui.view">
+        <field name="name">account.move.form.abc.rr</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']/list" position="inside">
+                <field name="abc_rr_tax_date_start" optional="hide"/>
+                <field name="abc_rr_tax_date_end" optional="hide"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/list" position="inside">
+                <field name="abc_rr_tax_date_start" optional="hide"/>
+                <field name="abc_rr_tax_date_end" optional="hide"/>
+            </xpath>
+            <xpath expr="/form/sheet" position="before">
+                <div class="alert alert-info mb-0" role="alert" invisible="not abc_rr_run_id">
+                    Scrittura generata dall'elaborazione ratei e risconti
+                    <field name="abc_rr_run_id" class="oe_inline" readonly="1"/>: non modificarla a mano.
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_abc_rr" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.abc.rr</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <block title="Ratei e risconti" name="abc_rr_setting_container">
+                    <setting id="abc_rr_journal" string="Registro e scrittura" company_dependent="1"
+                             help="Registro dedicato e raggruppamento della scrittura di assestamento. La data di chiusura e' la fine esercizio indicata sopra.">
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label for="abc_rr_journal_id" string="Registro" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_journal_id" domain="[('type', '=', 'general'), ('company_id', '=', company_id)]"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_rr_grouping" string="Raggruppamento" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_grouping"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting id="abc_rr_accounts" string="Conti predefiniti" company_dependent="1"
+                             help="Conti usati quando non c'e' un'eccezione per il conto di costo o ricavo.">
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label for="abc_rr_accrued_income_account_id" string="Ratei attivi" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_accrued_income_account_id"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_rr_accrued_expense_account_id" string="Ratei passivi" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_accrued_expense_account_id"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_rr_prepaid_expense_account_id" string="Risconti attivi" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_prepaid_expense_account_id"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_rr_deferred_income_account_id" string="Risconti passivi" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_deferred_income_account_id"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_rr_prepaid_expense_long_account_id" string="Risconti attivi oltre 12 mesi" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_prepaid_expense_long_account_id"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_rr_deferred_income_long_account_id" string="Risconti passivi oltre 12 mesi" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_deferred_income_long_account_id"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting id="abc_rr_prefixes" string="Controllo voci di bilancio" company_dependent="1"
+                             help="Prefissi dei conti ammessi (voce D attivo e voce E passivo del bilancio civilistico).">
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label for="abc_rr_asset_prefixes" string="Attivo (D)" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_asset_prefixes"/>
+                            </div>
+                            <div class="row">
+                                <label for="abc_rr_liability_prefixes" string="Passivo (E)" class="col-lg-5 o_light_label"/>
+                                <field name="abc_rr_liability_prefixes"/>
+                            </div>
+                            <div class="mt8">
+                                <button name="%(abc_l10n_it_ratei_risconti.action_rr_account_map)d" type="action"
+                                        string="Eccezioni per conto" class="btn-link" icon="oi-arrow-right"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
