@@ -1,6 +1,7 @@
 # Intrastat su Odoo 19: rinomina in `*_oca` — analisi
 
-Branch `finance-consulting-19.0` di `OM_l10n-italy`, nato da `abc-19.0` @ `681e202`.
+Branch `19.0-ottobre-26` di `OM_l10n-italy`, nato da `abc-19.0` @ `681e202`. Lavoro trasversale a tutti i
+clienti 19: il problema è emerso su Finance Consulting, ma lì è risolto senza codice (§6).
 Analisi del 06/10/2026. Fonti: sorgenti dei branch citati, log dell'upgrade odoo.sh di Finance Consulting
 (build 39312326), sorgente Enterprise 19 locale (`2de1512`, 29/07/2026).
 
@@ -125,13 +126,14 @@ installa il nuovo. Passo da scrivere nella procedura di migrazione di ogni clien
 caricherebbe col codice Enterprise e cancellerebbe campi e colonne OCA **prima** del hook. In quel caso la rinomina
 va fatta prima del caricamento dei moduli, cioè sul 16 o dalla piattaforma. Da chiarire con il punto 5.1.
 
-## 6. Finance Consulting
+## 6. Finance Consulting: il caso da cui è nato, risolto senza codice
 
 **Fatto.** Intrastat mai usato (0 dichiarazioni, 0 righe, solo valori di default) e disinstallato in produzione
-il 06/10, verificato con query di sola lettura.
-**Conclusione.** Per Finance Consulting la rinomina **non migra nessun dato**. Serve a togliere dall'addons-path
-un modulo con lo stesso nome di un modulo Enterprise. Il cliente su cui la rinomina va davvero provata è uno che
-l'Intrastat lo usa.
+il 06/10, verificato con query di sola lettura. L'upgrade delle 10:19 UTC ha usato un backup di **prima** della
+disinstallazione (nel log la piattaforma apre ancora i menu Intrastat).
+**Conclusione.** Con un backup successivo alla disinstallazione l'Intrastat non c'è più nel DB e la collisione non
+scatta. Per un cliente che l'Intrastat **lo usa**, disinstallarlo non è possibile: è per loro che serve questo branch,
+ed è su un cliente così che la rinomina va provata.
 
 ## 7. `custom-abc-19.0` ha già una rinomina a metà
 
@@ -155,13 +157,14 @@ a 19 del §4. Lo Statement non è rinominato, mentre OCA lo rinomina.
 viene prima. Va deciso quale copia tenere, dopo averle confrontate.
 
 ### 7.2 Ordine consigliato
-**Conclusione.** Fare **prima** il merge di `custom-abc-19.0` in `finance-consulting-19.0` e **poi** il lavoro
+**Conclusione.** Se il merge di `custom-abc-19.0` va fatto, farlo **prima** e **poi** il lavoro
 sull'Intrastat sopra il risultato. Al contrario, il merge finale incontrerebbe la rinomina di Fabrizio sugli stessi
 file e darebbe conflitti di rinomina.
 
 ## 8. Piano
 
-- [ ] Merge di `origin/custom-abc-19.0` in `finance-consulting-19.0` (§7.2), risolvendo i doppioni (§7.1)
+- [ ] Decidere se il merge di `origin/custom-abc-19.0` entra in questo branch (era pensato per Finance Consulting);
+      se sì, farlo per primo (§7.2) risolvendo i doppioni (§7.1)
 - [ ] Decidere: partire dalle PR OCA #5089/#5088 (proposta) o completare la rinomina di `custom-abc-19.0`
 - [ ] Portare su questo branch i moduli `l10n_it_intrastat_oca` e `l10n_it_intrastat_statement_oca` dalle PR,
       al posto di quelli presenti dopo il merge; escluso il commit `[DONT MERGE]`
