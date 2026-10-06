@@ -175,3 +175,112 @@ file e darebbe conflitti di rinomina.
 - [ ] Test in locale: installazione pulita; DB 16 con Intrastat OCA → 19 → installazione `_oca` → dati conservati
 - [ ] Chiarire con Odoo se la rinomina in `_custom` è generica o specifica (§5.1, §5.4)
 - [ ] Riportare in `abc-19.0` (decisione separata: è il branch di tutti i clienti)
+
+## 9. Il branch riparte da `custom-abc-19.0` (06/10/2026, pomeriggio)
+
+Decisione dell'utente: `19.0-ottobre-26` = `custom-abc-19.0` (`b0b77f5`) + questo documento. Il merge di
+`custom-abc-19.0` del §7.2 non serve più, perché il branch nasce da lì. Il §7.1 resta vero: i sei doppioni con
+gli OCA di `OM_base_l10n-italy` sono già dentro questo branch.
+
+### 9.1 I 9 commit di `abc-19.0` che questo branch non ha
+
+**Fatto.** `custom-abc-19.0` si è staccato da `abc-19.0` a `62f4f17`. Da allora `abc-19.0` ha 9 commit propri:
+
+| Commit | Data | Cosa |
+|---|---|---|
+| `681e202` | 22/07 | fix tax_id error |
+| `c83b5f7` | 15/07 | `l10n_it_vat_settlement_date`: pre-migration che rinomina `date_vat_settlement` |
+| `b4a567c` | 15/07 | `l10n_it_vat_settlement_date`: eliminati i file di test |
+| `6ce2433` | 15/07 | `l10n_it_vat_settlement_date`: test disattivati sulla build di migrazione |
+| `6498802` | 14/07 | `odoo.osv.expression` (deprecato in 19) → `odoo.fields.Domain` |
+| `61ae67f` | 22/06 | bugfix — tra l'altro aggiunge `migrate_old_module` a `l10n_it_riba_oca/hooks.py` |
+| `5d86add` | 17/06 | Odoo 19: via `odoo.fields.first` (deprecato) |
+| `5d36233` | 15/06 | `l10n_it_vat_registries`: pre-migration che toglie il riferimento al campo obsoleto `cee_type` |
+| `4942c26` | 12/06 | `l10n_it_asset_management`: gruppi/privilegi 19, `users`→`user_ids`, search view |
+
+**Fatto (difetto presente su questo branch).** `l10n_it_riba_oca/migrations/18.0.1.0.0/pre-migrate.py` chiama
+`hooks.migrate_old_module(cr)`, ma su `custom-abc-19.0` `hooks.py` definisce solo `pre_absorb_old_module`.
+La funzione l'ha aggiunta `61ae67f`, che qui manca.
+**Conclusione.** Su un DB in cui quella migrazione gira, l'aggiornamento di `l10n_it_riba_oca` si ferma con
+`AttributeError`. Gli altri commit sono adattamenti a 19 e migrazioni di campo che servono nel salto 16→19.
+Proposta: **merge di `abc-19.0` in `19.0-ottobre-26`**. Decisione dell'utente.
+
+### 9.2 Confronto modulo per modulo con OCA 18.0, OCA 19.0 e le PR 19
+
+Riferimenti: `upstream/18.0` @ `8f654e6` (02/10/2026), `upstream/19.0` @ `b4d0fab` (24/09/2026), issue
+OCA #4930 (elenco delle migrazioni 19: «unita» = già in `19.0`, «PR aperta» = proposta non ancora unita).
+Le differenze escludono traduzioni, README e `static`. «nostro vs OCA 18» misura quanto il port A.B.C. si è
+allontanato da OCA 18. «nostro vs OCA 19» quanto dista dalla versione ufficiale 19, dove esiste.
+
+**Già migrati da OCA alla 19 e presenti da noi** (12): `abicab`, `account`, `account_invoice_start_end_dates`,
+`account_stamp`, `appointment_code`, `ateco`, `central_journal_reportlab`, `currency_rate_update_boi`,
+`edi_related_document`, `fiscalcode_sale`, `vat_registries`. Le differenze più grandi rispetto all'ufficiale sono
+su `account` (+44 −207), `account_stamp` (+71 −195), `central_journal_reportlab` (+116 −58), `vat_registries`
+(+94 −76): vanno lette una per una prima di decidere se sostituire il nostro con l'ufficiale. Possono contenere
+correzioni A.B.C. o migrazioni 16→19 che OCA non ha.
+
+**In OCA 18 ma assenti da noi**:
+- `l10n_it_amount_to_text`: **già migrato da OCA alla 19**, da noi manca;
+- `l10n_it_pos_fiscalcode`: nessuna PR 19. ⚠️ Finance Consulting lo ha installato sul 16;
+- con PR 19 aperta: `l10n_it_delivery_note_customer_code`, `l10n_it_edi_pec`, `l10n_it_edi_sdi`,
+  `l10n_it_edi_sender_partner`, `l10n_it_edi_td29`;
+- senza PR: `l10n_it_edi_accompanying_invoice`.
+
+**Intrastat**: da noi `l10n_it_intrastat_oca` (rinomina di Fabrizio, senza hook) e `l10n_it_intrastat_statement`
+(nome vecchio). In OCA: PR aperte con entrambi rinominati e i hook (§2, §4).
+
+**RiBa, il precedente**: OCA ha rinominato `l10n_it_riba` → `l10n_it_riba_oca` alla 18, con hook e
+`migrations/18.0.1.0.0/pre-migrate.py`. Nella PR 19 (#5090) **hook e migrazione sono stati tolti**, perché da 18 a
+19 il nome non cambia più. Il nostro `l10n_it_riba_oca` li **conserva**, e serve: i nostri clienti saltano da 16.
+È lo stesso schema da seguire per l'Intrastat: hook all'installazione + migrazione per OpenUpgrade, tenuti anche
+dopo che OCA li avrà tolti.
+
+**Conclusione sull'Intrastat.** Sì, va rinominato anche lo Statement e servono i hook, come per la RiBa. La
+rinomina di Fabrizio è il primo passo, ma senza hook un DB che arriva dal 16 resta col nome vecchio.
+
+Tabella completa:
+
+| Modulo | nostro | OCA 18 | OCA 19 | PR #4930 | nostro vs OCA 19 | nostro vs OCA 18 |
+|---|---|---|---|---|---|---|
+| `l10n_it_abicab` | 19.0.1.0.0 | 18.0.1.0.0 | 19.0.1.0.0 | unita #5067 | 3 file, +5 -8 | 3 file, +6 -4 |
+| `l10n_it_accompanying_invoice` | 19.0.1.0.0 | 18.0.1.0.0 | — | PR aperta #5068 |  | 3 file, +24 -3 |
+| `l10n_it_account` | 19.0.1.0.1 | 18.0.1.1.2 | 19.0.1.0.0 | unita #5072 | 6 file, +44 -207 | 6 file, +38 -196 |
+| `l10n_it_account_invoice_start_end_dates` | 19.0.1.0.0 | 18.0.1.0.1 | 19.0.1.0.0 | unita #5318 | 3 file, +43 -62 | 2 file, +8 -17 |
+| `l10n_it_account_stamp` | 19.0.1.0.0 | 18.0.1.2.2 | 19.0.1.0.0 | unita #5069 | 11 file, +71 -195 | 6 file, +31 -25 |
+| `l10n_it_account_vat_period_end_settlement` | 19.0.1.0.0 | 18.0.1.0.6 | — | PR aperta #5319 |  | 4 file, +100 -41 |
+| `l10n_it_amount_to_text` | — | 18.0.1.0.0 | 19.0.1.0.0 | unita #5122 |  |  |
+| `l10n_it_appointment_code` | 19.0.1.0.0 | 18.0.1.0.0 | 19.0.1.0.0 | unita #5073 | 1 file, +1 -0 | 1 file, +1 -1 |
+| `l10n_it_asset_management` | 19.0.1.0.0 | 18.0.1.1.1 | — | PR aperta #5074 |  | 9 file, +15 -61 |
+| `l10n_it_ateco` | 19.0.1.0.0 | 18.0.1.0.0 | 19.0.1.0.0 | unita #5075 | 3 file, +5 -2 | 3 file, +3 -5 |
+| `l10n_it_bill_of_entry` | 19.0.1.0.0 | 18.0.1.0.0 | — | PR aperta #5076 |  | 2 file, +4 -2 |
+| `l10n_it_central_journal_reportlab` | 19.0.1.0.0 | 18.0.1.2.1 | 19.0.1.0.0 | unita #5077 | 3 file, +116 -58 | 2 file, +1 -3 |
+| `l10n_it_currency_rate_update_boi` | 19.0.1.0.0 | 18.0.1.0.0 | 19.0.1.0.0 | unita #5078 | 4 file, +1 -32 | 1 file, +1 -1 |
+| `l10n_it_delivery_note` | 19.0.1.0.1 | 18.0.1.2.0 | — | PR aperta #5081 |  | 23 file, +201 -872 |
+| `l10n_it_delivery_note_batch` | 19.0.1.0.0 | 18.0.1.0.0 | — | PR aperta #5079 |  | 1 file, +1 -1 |
+| `l10n_it_delivery_note_customer_code` | — | 18.0.1.0.0 | — | PR aperta #5213 |  |  |
+| `l10n_it_delivery_note_order_link` | 19.0.1.0.0 | 18.0.1.0.0 | — | PR aperta #5080 |  | 1 file, +1 -1 |
+| `l10n_it_edi_accompanying_invoice` | — | 18.0.1.0.0 | — |   |  |  |
+| `l10n_it_edi_doi_extension` | 19.0.1.0.1 | 18.0.1.1.2 | — | PR aperta #5082 |  | 16 file, +59 -1619 |
+| `l10n_it_edi_extension` | 19.0.1.0.0 | 18.0.1.12.3 | — | PR aperta #5083 |  | 27 file, +280 -1751 |
+| `l10n_it_edi_pec` | — | 18.0.1.1.0 | — | PR aperta #5218 |  |  |
+| `l10n_it_edi_related_document` | 19.0.1.0.0 | 18.0.1.2.1 | 19.0.1.0.0 | unita #5084 | 5 file, +14 -34 | 3 file, +21 -25 |
+| `l10n_it_edi_sdi` | — | 18.0.1.0.0 | — | PR aperta #5217 |  |  |
+| `l10n_it_edi_sender_partner` | — | 18.0.1.0.0 | — | PR aperta #5140 |  |  |
+| `l10n_it_edi_td29` | — | 18.0.1.0.0 | — | PR aperta #5272 |  |  |
+| `l10n_it_financial_statement_eu` | 19.0.1.0.0 | 18.0.1.0.0 | — | PR aperta #5085 |  | 2 file, +2 -2 |
+| `l10n_it_financial_statements_report` | 19.0.1.1.0 | 18.0.1.1.1 | — | PR aperta #5086 |  | 2 file, +3 -3 |
+| `l10n_it_fiscalcode_sale` | 19.0.1.0.0 | 18.0.1.0.0 | 19.0.1.0.0 | unita #5087 | 1 file, +2 -5 | 1 file, +1 -1 |
+| `l10n_it_hr_payroll_document` | — | — | — | PR aperta #5256 |  |  |
+| `l10n_it_intrastat` | — | 18.0.1.1.0 | — |   |  |  |
+| `l10n_it_intrastat_oca` | 19.0.1.0.0 | — | — | PR aperta #5089 |  |  |
+| `l10n_it_intrastat_statement` | 19.0.1.0.0 | 18.0.1.0.0 | — |   |  | 4 file, +9 -9 |
+| `l10n_it_intrastat_statement_oca` | — | — | — | PR aperta #5088 |  |  |
+| `l10n_it_location_nuts` | 19.0.1.0.0 | 18.0.1.0.1 | — | PR aperta #5098 |  | 2 file, +1 -2 |
+| `l10n_it_pos_fiscalcode` | — | 18.0.1.0.0 | — |   |  |  |
+| `l10n_it_riba_oca` | 19.0.1.0.0 | 18.0.1.3.0 | — | PR aperta #5090 |  | 8 file, +112 -179 |
+| `l10n_it_vat_registries` | 19.0.1.0.0 | 18.0.1.2.3 | 19.0.1.0.0 | unita #5091 | 8 file, +94 -76 | 4 file, +36 -76 |
+| `l10n_it_vat_settlement_communication` | 19.0.1.0.0 | 18.0.1.0.3 | — | PR aperta #5092 |  | 5 file, +21 -47 |
+| `l10n_it_vat_settlement_date` | 19.0.1.0.0 | 18.0.1.0.2 | — | PR aperta #5093 |  | 3 file, +14 -37 |
+| `l10n_it_website_portal_fiscalcode` | 19.0.1.0.0 | 18.0.1.0.0 | — |   |  | 4 file, +3 -73 |
+
+Moduli nostri non l10n_it: `abc_account_payment_term_extension_patch`, `abc_account_withholding_tax_reports`, `abc_bank_statement_line_invoice_ref`, `abc_date_range_fix`, `abc_l10n_it_compatibility`, `abc_l10n_it_edi_note_line`, `abc_l10n_it_ratei_risconti`, `abc_l10n_it_vat_registry_settlement_ext`, `abc_modelli_scritture`, `abc_partner_account_default`, `abc_tax_integration_wizard`, `abc_verifica_anagrafica`, `abc_verifica_anagrafica_sale`, `account_financial_report`, `account_fiscal_year`, `account_tax_balance`, `bitti_financial_statements`, `date_range`, `partner_default_purchase_tax`, `report_xlsx`, `report_xml`
