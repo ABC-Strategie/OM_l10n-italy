@@ -744,10 +744,17 @@ class AccountMoveInherit(models.Model):
             if name := get_text(tree, partner_info["name_xpath"]):
                 vals["name"] = name
                 vals["is_company"] = True
-            if first_name := get_text(tree, partner_info["first_name_xpath"]):
-                vals["firstname"] = first_name
-            if last_name := get_text(tree, partner_info["last_name_xpath"]):
-                vals["lastname"] = last_name
+            first_name = get_text(tree, partner_info["first_name_xpath"])
+            last_name = get_text(tree, partner_info["last_name_xpath"])
+            if "firstname" in self.env["res.partner"]._fields:
+                # partner_firstname is installed: use the split name fields
+                if first_name:
+                    vals["firstname"] = first_name
+                if last_name:
+                    vals["lastname"] = last_name
+            elif (first_name or last_name) and "name" not in vals:
+                # Single name field, "Cognome Nome" as in l10n_it_edi import
+                vals["name"] = " ".join(filter(None, [last_name, first_name]))
         else:
             vals = dict()
         return vals

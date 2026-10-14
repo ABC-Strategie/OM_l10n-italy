@@ -6,6 +6,8 @@ import base64
 from datetime import date
 from unittest.mock import patch
 
+from lxml import etree
+
 from odoo import tools
 from odoo.exceptions import MissingError
 
@@ -257,6 +259,28 @@ class TestFatturaPAXMLValidation(Common):
         # Assert
         partner = invoice.partner_id
         self.assertFalse(partner)
+
+    def test_person_partner_values(self):
+        """A seller with Nome and Cognome gets a single name "Cognome Nome",
+        or the split name fields if partner_firstname is installed."""
+        tree = etree.fromstring(
+            b"<FatturaElettronica><FatturaElettronicaHeader><CedentePrestatore>"
+            b"<DatiAnagrafici><Anagrafica>"
+            b"<Nome>MARIO</Nome><Cognome>ROSSI</Cognome>"
+            b"</Anagrafica></DatiAnagrafici>"
+            b"</CedentePrestatore></FatturaElettronicaHeader></FatturaElettronica>"
+        )
+
+        vals = self.env["account.move"]._l10n_it_edi_extension_prepare_partner_values(
+            tree, "seller"
+        )
+
+        if "firstname" in self.env["res.partner"]._fields:
+            self.assertEqual(vals["lastname"], "ROSSI")
+            self.assertEqual(vals["firstname"], "MARIO")
+        else:
+            self.assertEqual(vals["name"], "ROSSI MARIO")
+        self.assertNotIn("is_company", vals)
 
     def test_min_import_detail_level(self):
         """If import detail level is Minimum,

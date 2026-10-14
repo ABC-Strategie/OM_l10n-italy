@@ -19,7 +19,6 @@
     "depends": [
         "account",
         "l10n_it_edi",
-        "partner_firstname",
     ],
     "data": [
         "security/ir.model.access.csv",
