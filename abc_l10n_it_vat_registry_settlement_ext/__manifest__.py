@@ -1,6 +1,6 @@
 {
-    'name': 'ABC - Codice ATECO su Registri IVA e Liquidazione IVA senza righe a zero',
-    'version': '19.0.1.0.0',
+    'name': 'ABC - Codice ATECO su Registri IVA e Liquidazione IVA senza righe non movimentate',
+    'version': '19.0.1.1.0',
     'category': 'Accounting/Localizations',
     'summary': 'Codice ATECO stampato sul registro IVA vendite e righe di liquidazione IVA filtrate sulle sole aliquote movimentate',
     'description': """
@@ -9,8 +9,10 @@ Estensioni ai registri IVA e alla liquidazione IVA per BBS Pratiche e Servizi:
 - Campo testo "Codice ATECO" sul registro contabile (account.journal),
   stampato nel PDF del registro IVA accanto al nome del giornale.
 - Nella liquidazione IVA, le righe imposta a debito/credito che non hanno
-  avuto movimentazione nel periodo (importo zero) non vengono più generate,
-  sia in vista che in stampa.
+  avuto movimentazione nel periodo (imposta e imponibile a zero) non vengono
+  più generate, sia in vista che in stampa. Le aliquote 0% con imponibile nel
+  periodo restano visibili nel tab Conti e in stampa, anche se non hanno un
+  conto IVA sulle righe di ripartizione.
 - Corretto il wizard "Rimuovi periodo" della liquidazione IVA: la tendina
   dei periodi restava vuota perché basata su una Selection dinamica non più
   valorizzata da get_views in Odoo 19.
