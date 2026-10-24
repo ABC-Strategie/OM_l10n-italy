@@ -42,6 +42,9 @@ class AccountMove(models.Model):
                 'ritenuta': False,
                 'natura': default_natura,
                 'altri_dati_gestionali_list': [],
+                # chiave richiesta dal modello riga di l10n_it_edi_extension
+                # (RiferimentoAmministrazione): senza, l'XML va in KeyError
+                'admin_ref': None,
             }
             
             base_lines.append({

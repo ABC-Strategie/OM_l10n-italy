@@ -1,6 +1,6 @@
 {
     'name': 'ABC L10n IT EDI Note Line',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.2',
     'category': 'Accounting/Localizations',
     'summary': 'Export note lines in Italian EDI XML',
     'author': "Fabrizio D'Adamo",
