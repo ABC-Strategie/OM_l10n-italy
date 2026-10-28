@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_journal_form_inherit_abc_invoice_date_check" model="ir.ui.view">
+        <field name="name">account.journal.form.inherit.abc.invoice.date.check</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <field name="refund_sequence" position="after">
+                <field name="abc_invoice_date_check"
+                       invisible="type != 'sale'"
+                       groups="account.group_account_manager"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
