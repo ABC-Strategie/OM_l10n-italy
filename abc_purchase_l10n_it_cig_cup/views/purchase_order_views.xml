@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="purchase_order_form_cig_cup" model="ir.ui.view">
+        <field name="name">purchase.order.form.cig.cup</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form" />
+        <field name="arch" type="xml">
+            <!-- Scheda Altre informazioni, come il gruppo di l10n_it_edi_sale
+                 sull'ordine di vendita. -->
+            <xpath expr="//group[@name='invoice_info']" position="after">
+                <field name="country_code" invisible="1" />
+                <field name="l10n_it_partner_pa" invisible="1" />
+                <group
+                    name="it_edi_purchase_order"
+                    string="Fatturazione elettronica italiana"
+                    invisible="country_code != 'IT' or not l10n_it_partner_pa"
+                >
+                    <field name="l10n_it_cig" />
+                    <field name="l10n_it_cup" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Viste lista: Richieste di preventivo, Ordini di acquisto e acquisti
+         aperti dal partner. -->
+    <record id="purchase_order_kpis_tree_cig_cup" model="ir.ui.view">
+        <field name="name">purchase.order.kpis.list.cig.cup</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree" />
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="l10n_it_cig" optional="show" />
+                <field name="l10n_it_cup" optional="show" />
+            </field>
+        </field>
+    </record>
+
+    <record id="purchase_order_view_tree_cig_cup" model="ir.ui.view">
+        <field name="name">purchase.order.view.list.cig.cup</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree" />
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="l10n_it_cig" optional="show" />
+                <field name="l10n_it_cup" optional="show" />
+            </field>
+        </field>
+    </record>
+
+    <record id="purchase_order_tree_cig_cup" model="ir.ui.view">
+        <field name="name">purchase.order.list.cig.cup</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_tree" />
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="l10n_it_cig" optional="show" />
+                <field name="l10n_it_cup" optional="show" />
+            </field>
+        </field>
+    </record>
+
+    <!-- Ricerca e raggruppamenti per CIG e CUP: vista di ricerca delle
+         Richieste di preventivo e degli Ordini di acquisto. -->
+    <record id="view_purchase_order_filter_cig_cup" model="ir.ui.view">
+        <field name="name">purchase.order.rfq.search.cig.cup</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_filter" />
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="l10n_it_cig" />
+                <field name="l10n_it_cup" />
+            </field>
+            <xpath expr="//group" position="inside">
+                <filter
+                    string="CIG"
+                    name="groupby_l10n_it_cig"
+                    context="{'group_by': 'l10n_it_cig'}"
+                />
+                <filter
+                    string="CUP"
+                    name="groupby_l10n_it_cup"
+                    context="{'group_by': 'l10n_it_cup'}"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_view_search_cig_cup" model="ir.ui.view">
+        <field name="name">purchase.order.search.cig.cup</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_search" />
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="l10n_it_cig" />
+                <field name="l10n_it_cup" />
+            </field>
+            <xpath expr="//group" position="inside">
+                <filter
+                    string="CIG"
+                    name="groupby_l10n_it_cig"
+                    context="{'group_by': 'l10n_it_cig'}"
+                />
+                <filter
+                    string="CUP"
+                    name="groupby_l10n_it_cup"
+                    context="{'group_by': 'l10n_it_cup'}"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>
