@@ -5,7 +5,7 @@
     "name": "ITA - Dichiarazione Intrastat (ponte verso "
     "l10n_it_intrastat_statement_oca)",
     # Deve restare piu' alta della versione installata del vecchio modulo
-    # (16.0.1.3.3): e' il cambio di versione a far lanciare a Odoo.sh `-u`.
+    # (16.0.1.3.1): e' il cambio di versione a far lanciare a Odoo.sh `-u`.
     "version": "16.0.1.4.0",
     "category": "Hidden",
     "summary": "Modulo ponte della rinomina: fa installare "

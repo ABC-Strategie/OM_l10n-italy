@@ -16,7 +16,7 @@ installato, l'hook non parte e il vecchio modulo resta "installato" senza codice
 
 ## Come funziona
 
-1. Nel database il vecchio `l10n_it_intrastat` è installato a 16.0.1.2.1, questo ponte è a 16.0.1.3.0: Odoo.sh
+1. Nel database il vecchio `l10n_it_intrastat` è installato a 16.0.1.1.3, questo ponte è a 16.0.1.3.0: Odoo.sh
    vede la versione cambiata e lancia `-u l10n_it_intrastat`.
 2. `button_upgrade` installa le dipendenze non installate: `l10n_it_intrastat_oca` passa a "da installare".
 3. Il ponte viene rinviato, perché la sua dipendenza non è ancora caricata (log INFO `Unmet dependencies`).
