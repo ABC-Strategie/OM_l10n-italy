@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <!-- Riepilogo per aliquota di un sezionale (summary_journal_id), reso come
+         una riga della tabella del registro che occupa tutte le colonne. -->
+    <template id="report_registro_iva_journal_totals">
+        <t
+            t-set="journal_summary"
+            t-value="journal_totals(summary_journal_id, doc_ids, data)"
+        />
+        <tr t-if="journal_summary['lines']" style="page-break-inside: avoid;">
+            <td t-att-colspan="columns_number" style="padding: 8px 0 16px 0;">
+                <table
+                    style="width:100%; page-break-inside: avoid;"
+                    cellspacing="0"
+                >
+                    <tr>
+                        <th
+                            class="left_with_line_bottom"
+                            t-out="'Totali ' + journal_summary['journal_name']"
+                        />
+                        <th class="right_with_line_bottom">Imponibile</th>
+                        <th class="right_with_line_bottom">Imposta</th>
+                        <th class="right_with_line_bottom">Detraibile</th>
+                        <th class="right_with_line_bottom">Indetraibile</th>
+                    </tr>
+                    <tr t-foreach="journal_summary['lines']" t-as="summary_line">
+                        <td class="left_without_line" t-out="summary_line['name']" />
+                        <td
+                            class="right_without_line"
+                            t-out="formatLang(env, summary_line['base'])"
+                        />
+                        <td
+                            class="right_without_line"
+                            t-out="formatLang(env, summary_line['tax'])"
+                        />
+                        <td
+                            class="right_without_line"
+                            t-out="formatLang(env, summary_line['deductible'])"
+                        />
+                        <td
+                            class="right_without_line"
+                            t-out="formatLang(env, summary_line['undeductible'])"
+                        />
+                    </tr>
+                    <t t-set="summary_totals" t-value="journal_summary['totals']" />
+                    <tr style="font-weight: bold;">
+                        <td class="left_with_line">Totale sezione</td>
+                        <td
+                            class="right_with_line"
+                            t-out="formatLang(env, summary_totals['base'])"
+                        />
+                        <td
+                            class="right_with_line"
+                            t-out="formatLang(env, summary_totals['tax'])"
+                        />
+                        <td
+                            class="right_with_line"
+                            t-out="formatLang(env, summary_totals['deductible'])"
+                        />
+                        <td
+                            class="right_with_line"
+                            t-out="formatLang(env, summary_totals['undeductible'])"
+                        />
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </template>
+
+    <template
+        id="report_registro_iva"
+        inherit_id="l10n_it_vat_registries.report_registro_iva"
+    >
+        <!-- Cambio sezionale: prima dell'intestazione del nuovo sezionale
+             stampa il riepilogo di quello appena concluso. -->
+        <xpath
+            expr="//t[@t-if='move.journal_id.id != sv_journal_id']/tr"
+            position="before"
+        >
+            <t t-if="sv_journal_id">
+                <t
+                    t-call="abc_l10n_it_vat_registry_journal_totals.report_registro_iva_journal_totals"
+                >
+                    <t t-set="summary_journal_id" t-value="sv_journal_id" />
+                </t>
+            </t>
+        </xpath>
+        <!-- Fine registro: riepilogo dell'ultimo sezionale. -->
+        <xpath expr="//tbody/t[@t-foreach='get_move(doc_ids)']" position="after">
+            <t t-if="entry_order == 'journal_date_name' and sv_journal_id">
+                <t
+                    t-call="abc_l10n_it_vat_registry_journal_totals.report_registro_iva_journal_totals"
+                >
+                    <t t-set="summary_journal_id" t-value="sv_journal_id" />
+                </t>
+            </t>
+        </xpath>
+    </template>
+</odoo>

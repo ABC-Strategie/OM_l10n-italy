@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Pulsante per ridatare alla scadenza rata le scritture di un prestito
+         confermato prima dell'installazione del modulo -->
+    <record id="account_loan_form_view_due_date" model="ir.ui.view">
+        <field name="name">account.loan.form.abc.due.date</field>
+        <field name="model">account.loan</field>
+        <field name="inherit_id" ref="account_loans.account_loan_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_cancel']" position="after">
+                <button
+                    name="action_abc_realign_move_dates" string="Riallinea date a scadenza rata"
+                    class="btn btn-secondary" type="object" groups="account.group_account_manager"
+                    invisible="state not in ('running', 'closed')"
+                    confirm="Le scritture del prestito verranno ridatate alla scadenza della rata. Quelle confermate saranno rimesse in bozza, ridatate e riconfermate (con un nuovo numero se cambia il mese). Continuare?"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_account_loan_realign_move_dates" model="ir.actions.server">
+        <field name="name">Riallinea date a scadenza rata</field>
+        <field name="model_id" ref="account_loans.model_account_loan"/>
+        <field name="binding_model_id" ref="account_loans.model_account_loan"/>
+        <field name="binding_view_types">list</field>
+        <field name="group_ids" eval="[(4, ref('account.group_account_manager'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_abc_realign_move_dates()</field>
+    </record>
+
+</odoo>
