@@ -1,0 +1,36 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wh_user,abc.withholding user,model_abc_withholding,group_wh_user,1,0,0,0
+access_wh_manager,abc.withholding manager,model_abc_withholding,group_wh_manager,1,1,1,1
+access_wh_line_user,abc.withholding.line user,model_abc_withholding_line,group_wh_user,1,0,0,0
+access_wh_line_manager,abc.withholding.line manager,model_abc_withholding_line,group_wh_manager,1,1,1,1
+access_wh_map_user,abc.withholding.tributo.map user,model_abc_withholding_tributo_map,group_wh_user,1,0,0,0
+access_wh_map_manager,abc.withholding.tributo.map manager,model_abc_withholding_tributo_map,group_wh_manager,1,1,1,1
+access_wh_payment_user,abc.withholding.payment user,model_abc_withholding_payment,group_wh_user,1,0,0,0
+access_wh_payment_manager,abc.withholding.payment manager,model_abc_withholding_payment,group_wh_manager,1,1,1,1
+access_wh_tribute_user,abc.withholding.payment.tribute user,model_abc_withholding_payment_tribute,group_wh_user,1,0,0,0
+access_wh_tribute_manager,abc.withholding.payment.tribute manager,model_abc_withholding_payment_tribute,group_wh_manager,1,1,1,1
+access_wh_compensation_user,abc.withholding.payment.compensation user,model_abc_withholding_payment_compensation,group_wh_user,1,0,0,0
+access_wh_compensation_manager,abc.withholding.payment.compensation manager,model_abc_withholding_payment_compensation,group_wh_manager,1,1,1,1
+access_wh_deadline_user,abc.withholding.deadline user,model_abc_withholding_deadline,group_wh_user,1,0,0,0
+access_wh_deadline_manager,abc.withholding.deadline manager,model_abc_withholding_deadline,group_wh_manager,1,1,1,1
+access_wh_cu_received_user,abc.withholding.cu.received user,model_abc_withholding_cu_received,group_wh_user,1,0,0,0
+access_wh_cu_received_manager,abc.withholding.cu.received manager,model_abc_withholding_cu_received,group_wh_manager,1,1,1,1
+access_wh_credit_user,abc.withholding.credit user,model_abc_withholding_credit,group_wh_user,1,0,0,0
+access_wh_credit_manager,abc.withholding.credit manager,model_abc_withholding_credit,group_wh_manager,1,1,1,1
+access_wh_credit_usage_user,abc.withholding.credit.usage user,model_abc_withholding_credit_usage,group_wh_user,1,0,0,0
+access_wh_credit_usage_manager,abc.withholding.credit.usage manager,model_abc_withholding_credit_usage,group_wh_manager,1,1,1,1
+access_wh_declaration_user,abc.withholding.declaration user,model_abc_withholding_declaration,group_wh_user,1,0,0,0
+access_wh_declaration_manager,abc.withholding.declaration manager,model_abc_withholding_declaration,group_wh_manager,1,1,1,1
+access_wh_cu_user,abc.withholding.cu user,model_abc_withholding_cu,group_wh_user,1,0,0,0
+access_wh_cu_manager,abc.withholding.cu manager,model_abc_withholding_cu,group_wh_manager,1,1,1,1
+access_wh_cu_line_user,abc.withholding.cu.line user,model_abc_withholding_cu_line,group_wh_user,1,0,0,0
+access_wh_cu_line_manager,abc.withholding.cu.line manager,model_abc_withholding_cu_line,group_wh_manager,1,1,1,1
+access_wh_st_user,abc.withholding.st user,model_abc_withholding_st,group_wh_user,1,0,0,0
+access_wh_st_manager,abc.withholding.st manager,model_abc_withholding_st,group_wh_manager,1,1,1,1
+access_wh_dashboard_user,abc.withholding.dashboard user,model_abc_withholding_dashboard,group_wh_user,1,1,1,1
+access_wh_payment_wizard,abc.withholding.payment.wizard,model_abc_withholding_payment_wizard,group_wh_manager,1,1,1,1
+access_wh_rebuild_wizard,abc.withholding.rebuild.wizard,model_abc_withholding_rebuild_wizard,group_wh_manager,1,1,1,1
+access_wh_deduct_wizard,abc.withholding.deduct.wizard,model_abc_withholding_deduct_wizard,group_wh_manager,1,1,1,1
+access_wh_tax_config_wizard,abc.withholding.tax.config.wizard,model_abc_withholding_tax_config_wizard,group_wh_manager,1,1,1,1
+access_wh_tax_template_line,abc.withholding.tax.template.line,model_abc_withholding_tax_template_line,group_wh_manager,1,1,1,1
+access_wh_tax_config_line,abc.withholding.tax.config.line,model_abc_withholding_tax_config_line,group_wh_manager,1,1,1,1

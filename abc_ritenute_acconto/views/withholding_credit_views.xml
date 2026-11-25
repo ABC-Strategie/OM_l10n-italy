@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_abc_wh_credit_list" model="ir.ui.view">
+        <field name="name">abc.withholding.credit.list</field>
+        <field name="model">abc.withholding.credit</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="year"/>
+                <field name="tax_kind"/>
+                <field name="amount" sum="Totale"/>
+                <field name="used_amount" sum="Totale"/>
+                <field name="residual_amount" sum="Totale"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_credit_form" model="ir.ui.view">
+        <field name="name">abc.withholding.credit.form</field>
+        <field name="model">abc.withholding.credit</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <h1><field name="name" readonly="1"/></h1>
+                    <group>
+                        <group>
+                            <field name="year"/>
+                            <field name="tax_kind"/>
+                            <field name="amount"/>
+                        </group>
+                        <group>
+                            <field name="used_amount"/>
+                            <field name="residual_amount"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Utilizzi in F24" name="usage">
+                            <field name="usage_ids">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="tributo_code"/>
+                                    <field name="amount" sum="Totale"/>
+                                    <field name="note"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Note" name="note">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_abc_wh_credit" model="ir.actions.act_window">
+        <field name="name">Eccedenze e utilizzi</field>
+        <field name="res_model">abc.withholding.credit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

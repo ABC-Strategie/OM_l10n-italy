@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_abc_wh_rebuild_wizard_form" model="ir.ui.view">
+        <field name="name">abc.withholding.rebuild.wizard.form</field>
+        <field name="model">abc.withholding.rebuild.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Ricostruzione dello storico ritenute">
+                <div class="alert alert-info" role="alert">
+                    Crea il registro dalle fatture gia' confermate e dai pagamenti gia' riconciliati.
+                    I pagamenti gia' fatti non generano scritture (la ritenuta e' gia' sul conto erariale tramite
+                    le scritture per cassa). Si puo' rilanciare: non crea doppioni.
+                </div>
+                <group invisible="result">
+                    <group>
+                        <field name="cycle"/>
+                        <field name="date_from"/>
+                        <field name="paid_until" invisible="cycle != 'passive'"/>
+                        <field name="import_oca"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group>
+                        <field name="migrate_transit"/>
+                        <field name="migration_date" invisible="not migrate_transit and not import_oca"/>
+                    </group>
+                </group>
+                <field name="result" invisible="not result" readonly="1"/>
+                <footer>
+                    <button name="action_run" type="object" string="Ricostruisci" class="btn-primary" invisible="result"
+                            confirm="Avviare la ricostruzione del registro? Le scritture di passaggio, se richieste, vengono registrate."/>
+                    <button special="cancel" string="Chiudi"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_abc_wh_rebuild_wizard" model="ir.actions.act_window">
+        <field name="name">Ricostruisci storico</field>
+        <field name="res_model">abc.withholding.rebuild.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_abc_wh_dashboard_passive" model="ir.ui.view">
+        <field name="name">abc.withholding.dashboard.passive</field>
+        <field name="model">abc.withholding.dashboard</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <h1>Ritenute passive</h1>
+                    <div class="text-muted mb-3">Prossima scadenza: <field name="next_due_date" readonly="1" class="oe_inline"/></div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <button name="action_open_matured" type="object" class="btn btn-light w-100 p-3 text-start">
+                                <div class="text-muted">Maturate (fatture non pagate)</div>
+                                <h2><field name="matured_amount" readonly="1"/></h2>
+                            </button>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <button name="action_open_due" type="object" class="btn btn-light w-100 p-3 text-start">
+                                <div class="text-muted">Dovute in scadenza</div>
+                                <h2><field name="due_amount" readonly="1"/></h2>
+                            </button>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <button name="action_open_overdue" type="object" class="btn btn-light w-100 p-3 text-start">
+                                <div class="text-danger">Scadute non versate</div>
+                                <h2><field name="overdue_amount" readonly="1"/></h2>
+                            </button>
+                        </div>
+                    </div>
+                    <field name="cycle" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_dashboard_active" model="ir.ui.view">
+        <field name="name">abc.withholding.dashboard.active</field>
+        <field name="model">abc.withholding.dashboard</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <h1>Ritenute attive</h1>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <button name="action_open_matured" type="object" class="btn btn-light w-100 p-3 text-start">
+                                <div class="text-muted">Maturate (non incassate)</div>
+                                <h2><field name="active_matured_amount" readonly="1"/></h2>
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button name="action_open_suffered" type="object" class="btn btn-light w-100 p-3 text-start">
+                                <div class="text-warning">Subite non certificate</div>
+                                <h2><field name="suffered_amount" readonly="1"/></h2>
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button name="action_open_certified" type="object" class="btn btn-light w-100 p-3 text-start">
+                                <div class="text-muted">Certificate da scomputare</div>
+                                <h2><field name="certified_amount" readonly="1"/></h2>
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button name="action_open_cu" type="object" class="btn btn-light w-100 p-3 text-start">
+                                <div class="text-danger">CU mancanti o con differenze</div>
+                                <h2><field name="cu_missing_count" readonly="1"/></h2>
+                            </button>
+                        </div>
+                    </div>
+                    <field name="cycle" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_server_dashboard_passive" model="ir.actions.server">
+        <field name="name">Cruscotto ritenute passive</field>
+        <field name="model_id" ref="model_abc_withholding_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open('passive')</field>
+    </record>
+
+    <record id="action_server_dashboard_active" model="ir.actions.server">
+        <field name="name">Cruscotto ritenute attive</field>
+        <field name="model_id" ref="model_abc_withholding_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open('active')</field>
+    </record>
+</odoo>

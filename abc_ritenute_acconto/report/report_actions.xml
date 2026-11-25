@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_payment" model="ir.actions.report">
+        <field name="name">Riepilogo versamento F24</field>
+        <field name="model">abc.withholding.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">abc_ritenute_acconto.report_payment</field>
+        <field name="report_file">abc_ritenute_acconto.report_payment</field>
+        <field name="print_report_name">'Versamento F24 %s' % object.name</field>
+        <field name="binding_model_id" ref="model_abc_withholding_payment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_cu" model="ir.actions.report">
+        <field name="name">Certificazione Unica (sintetica)</field>
+        <field name="model">abc.withholding.cu</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">abc_ritenute_acconto.report_cu</field>
+        <field name="report_file">abc_ritenute_acconto.report_cu</field>
+        <field name="print_report_name">'CU %s - %s' % ((object.year or 0) + 1, object.partner_id.name)</field>
+        <field name="binding_model_id" ref="model_abc_withholding_cu"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_register" model="ir.actions.report">
+        <field name="name">Registro ritenute</field>
+        <field name="model">abc.withholding.line</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">abc_ritenute_acconto.report_register</field>
+        <field name="report_file">abc_ritenute_acconto.report_register</field>
+        <field name="print_report_name">'Registro ritenute'</field>
+        <field name="binding_model_id" ref="model_abc_withholding_line"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

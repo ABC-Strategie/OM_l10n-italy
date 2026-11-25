@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_abc_wh" model="ir.ui.view">
+        <field name="name">res.partner.form.abc.withholding</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Ritenute e CU" name="abc_withholding" groups="abc_ritenute_acconto.group_wh_user">
+                    <group>
+                        <group string="Regime">
+                            <field name="abc_wh_tax_regime" readonly="1"/>
+                            <field name="abc_wh_flat_rate"/>
+                            <field name="abc_wh_non_resident"/>
+                            <field name="abc_wh_residence_cert" filename="abc_wh_residence_cert_name" invisible="not abc_wh_non_resident"/>
+                            <field name="abc_wh_residence_cert_name" invisible="1"/>
+                            <field name="abc_wh_residence_cert_expiry" invisible="not abc_wh_non_resident"/>
+                        </group>
+                        <group string="Dati per la CU (persone fisiche)">
+                            <field name="abc_wh_birth_date"/>
+                            <field name="abc_wh_birth_city"/>
+                            <field name="abc_wh_birth_province"/>
+                            <field name="abc_wh_gender"/>
+                            <field name="abc_wh_cu_email"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

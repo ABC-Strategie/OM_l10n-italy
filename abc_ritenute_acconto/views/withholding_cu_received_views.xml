@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_abc_wh_cu_received_list" model="ir.ui.view">
+        <field name="name">abc.withholding.cu.received.list</field>
+        <field name="model">abc.withholding.cu.received</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'difference'" decoration-warning="state == 'missing'"
+                  decoration-success="state in ('matched', 'confirmed')">
+                <field name="year"/>
+                <field name="partner_id"/>
+                <field name="registered_amount" sum="Totale"/>
+                <field name="certified_amount" sum="Totale"/>
+                <field name="difference" sum="Totale"/>
+                <field name="received_date" optional="show"/>
+                <field name="source" optional="hide"/>
+                <field name="reminder_count" optional="show"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_cu_received_form" model="ir.ui.view">
+        <field name="name">abc.withholding.cu.received.form</field>
+        <field name="model">abc.withholding.cu.received</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" type="object" string="Conferma CU" class="btn-primary"
+                            invisible="state != 'matched'" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <button name="action_confirm_force" type="object" string="Conferma comunque"
+                            invisible="state != 'difference'" groups="abc_ritenute_acconto.group_wh_manager"
+                            confirm="La CU non quadra con le ritenute registrate. Confermare comunque?"/>
+                    <button name="action_send_reminder" type="object" string="Invia sollecito"
+                            invisible="state not in ('missing', 'difference')" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <button name="action_reset" type="object" string="Riapri"
+                            invisible="state != 'confirmed'" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <h1><field name="name" readonly="1"/></h1>
+                    <group>
+                        <group string="Cliente">
+                            <field name="partner_id" readonly="id"/>
+                            <field name="year" readonly="id"/>
+                            <field name="registered_amount"/>
+                            <field name="reminder_count" readonly="1"/>
+                        </group>
+                        <group string="CU ricevuta">
+                            <field name="received_date" readonly="confirmed"/>
+                            <field name="source" readonly="confirmed"/>
+                            <field name="certified_compensi" readonly="confirmed"/>
+                            <field name="certified_amount" readonly="confirmed"/>
+                            <field name="difference"/>
+                            <field name="attachment" filename="attachment_name"/>
+                            <field name="attachment_name" invisible="1"/>
+                            <field name="confirmed" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Ritenute registrate" name="lines">
+                            <field name="line_ids" readonly="1">
+                                <list>
+                                    <field name="move_id"/>
+                                    <field name="invoice_date"/>
+                                    <field name="payment_date"/>
+                                    <field name="amount" sum="Totale"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_cu_received_search" model="ir.ui.view">
+        <field name="name">abc.withholding.cu.received.search</field>
+        <field name="model">abc.withholding.cu.received</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="year"/>
+                <filter name="missing" string="Mancanti" domain="[('state', '=', 'missing')]"/>
+                <filter name="difference" string="Con differenza" domain="[('state', '=', 'difference')]"/>
+                <filter name="to_check" string="Da sistemare" domain="[('state', 'in', ('missing', 'difference'))]"/>
+                <group>
+                    <filter name="group_year" string="Anno" context="{'group_by': 'year'}"/>
+                    <filter name="group_state" string="Esito" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_abc_wh_cu_received" model="ir.actions.act_window">
+        <field name="name">Controllo CU ricevute</field>
+        <field name="res_model">abc.withholding.cu.received</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_year': 1}</field>
+    </record>
+
+    <record id="action_server_cu_received_generate" model="ir.actions.server">
+        <field name="name">Genera controlli CU dell'anno scorso</field>
+        <field name="model_id" ref="model_abc_withholding_cu_received"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_generate_current()</field>
+    </record>
+</odoo>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Prospetto di certificazione con i dati della CU (lavoro autonomo).
+         Non riproduce l'impaginazione del modello ministeriale: per la consegna
+         ufficiale va adottato il layout del modello dell'anno. -->
+    <template id="report_cu">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <t t-set="company" t-value="o.company_id"/>
+                    <t t-set="p" t-value="o.partner_id"/>
+                    <div class="page">
+                        <h3>Certificazione Unica <t t-out="(o.year or 0) + 1"/> - redditi di lavoro autonomo, provvigioni e redditi diversi</h3>
+                        <p t-if="o.cu_type != 'ordinary'"><strong>
+                            <t t-out="o.cu_type == 'replacement' and 'CU sostitutiva' or 'CU di annullamento'"/>
+                            <t t-if="o.protocol_to_replace"> del protocollo <t t-out="o.protocol_to_replace"/></t>
+                        </strong></p>
+                        <div class="row">
+                            <div class="col-6">
+                                <h5>Sostituto d'imposta</h5>
+                                <div><t t-out="company.name"/></div>
+                                <div>Codice fiscale: <t t-out="company.partner_id.l10n_it_codice_fiscale or company.vat"/></div>
+                                <div><t t-out="company.street"/> - <t t-out="company.zip"/> <t t-out="company.city"/></div>
+                                <div t-if="company.abc_wh_ateco_code">Codice attivita': <t t-out="company.abc_wh_ateco_code"/></div>
+                            </div>
+                            <div class="col-6">
+                                <h5>Percipiente</h5>
+                                <div><t t-out="p.name"/></div>
+                                <div>Codice fiscale: <t t-out="p.l10n_it_codice_fiscale"/></div>
+                                <div t-if="p.abc_wh_birth_date">Nato/a il <t t-out="p.abc_wh_birth_date" t-options="{'widget': 'date'}"/>
+                                    a <t t-out="p.abc_wh_birth_city"/> (<t t-out="p.abc_wh_birth_province"/>)</div>
+                                <div><t t-out="p.street"/> - <t t-out="p.zip"/> <t t-out="p.city"/></div>
+                            </div>
+                        </div>
+                        <table class="table table-sm mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Causale</th>
+                                    <th class="text-end">Ammontare lordo corrisposto</th>
+                                    <th class="text-end">Somme non soggette</th>
+                                    <th>Codice</th>
+                                    <th class="text-end">Imponibile</th>
+                                    <th class="text-end">Ritenute a titolo d'acconto</th>
+                                    <th class="text-end">Ritenute a titolo d'imposta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="l">
+                                    <td><t t-out="l.reason"/></td>
+                                    <td class="text-end"><t t-out="l.gross" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><t t-out="l.not_subject" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td><t t-out="l.not_subject_code"/></td>
+                                    <td class="text-end"><t t-out="l.taxable" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><t t-out="l.withheld_advance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><t t-out="l.withheld_final" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p t-if="o.social_contrib">Contributi previdenziali trattenuti:
+                            <t t-out="o.social_contrib" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></p>
+                        <p class="mt-5">Firma del sostituto d'imposta: <t t-out="company.abc_wh_signer_name"/></p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

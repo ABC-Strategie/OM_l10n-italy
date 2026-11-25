@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Testate: una per ritenuta in fattura -->
+    <record id="view_abc_wh_list" model="ir.ui.view">
+        <field name="name">abc.withholding.list</field>
+        <field name="model">abc.withholding</field>
+        <field name="arch" type="xml">
+            <list create="0" decoration-danger="xml_mismatch" decoration-muted="state == 'cancelled'">
+                <field name="cycle" column_invisible="context.get('default_cycle')" optional="hide"/>
+                <field name="partner_id"/>
+                <field name="partner_fiscalcode" optional="hide"/>
+                <field name="partner_vat" optional="hide"/>
+                <field name="move_id"/>
+                <field name="invoice_ref" optional="show"/>
+                <field name="invoice_date"/>
+                <field name="accounting_date" optional="hide"/>
+                <field name="invoice_total" optional="hide" sum="Totale"/>
+                <field name="withholding_type" optional="hide"/>
+                <field name="reason" optional="show"/>
+                <field name="tributo_code" optional="show"/>
+                <field name="rate" optional="hide"/>
+                <field name="base_amount" optional="show" sum="Totale"/>
+                <field name="amount" sum="Totale"/>
+                <field name="residual_amount" optional="show" sum="Totale"/>
+                <field name="xml_mismatch" optional="hide"/>
+                <field name="state" widget="badge" decoration-info="state == 'matured'"
+                       decoration-warning="state in ('due', 'suffered')" decoration-success="state in ('paid', 'certified', 'deducted')"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_form" model="ir.ui.view">
+        <field name="name">abc.withholding.form</field>
+        <field name="model">abc.withholding</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <button name="action_not_operated" type="object" string="Ritenuta non operata"
+                            invisible="cycle != 'active' or state not in ('suffered',)"
+                            groups="abc_ritenute_acconto.group_wh_manager"
+                            confirm="Il cliente ha pagato il lordo senza trattenere la ritenuta: stornare il credito?"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_move" type="object" class="oe_stat_button" icon="fa-file-text-o" string="Fattura"/>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not xml_mismatch">
+                        L'importo della ritenuta nel file XML e' diverso da quello calcolato da Odoo.
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not possible_not_operated">
+                        Il cliente sembra aver pagato il lordo: verificare se la ritenuta e' stata operata.
+                    </div>
+                    <h1><field name="name" readonly="1"/></h1>
+                    <group>
+                        <group string="Documento">
+                            <field name="cycle" readonly="1"/>
+                            <field name="move_id" readonly="1"/>
+                            <field name="move_type" readonly="1"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="partner_fiscalcode"/>
+                            <field name="partner_vat"/>
+                            <field name="invoice_ref" readonly="1"/>
+                            <field name="invoice_date" readonly="1"/>
+                            <field name="invoice_total" readonly="1"/>
+                            <field name="net_to_pay" readonly="1"/>
+                        </group>
+                        <group string="Ritenuta">
+                            <field name="tax_id" readonly="1" invisible="not tax_id"/>
+                            <field name="legacy_tax_name" invisible="not legacy_tax_name"/>
+                            <field name="final_account_id" readonly="1"/>
+                            <field name="withholding_type" readonly="1"/>
+                            <field name="reason"/>
+                            <field name="tributo_code"/>
+                            <field name="is_contribution" readonly="1"/>
+                            <field name="is_final"/>
+                            <field name="rate" readonly="1"/>
+                            <field name="base_amount" readonly="1"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="n1_amount"/>
+                            <field name="xml_amount" readonly="1"/>
+                            <field name="residual_amount"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Quote per pagamento / incasso" name="lines">
+                            <field name="line_ids" readonly="1">
+                                <list>
+                                    <field name="kind"/>
+                                    <field name="payment_date"/>
+                                    <field name="counterpart_move_id"/>
+                                    <field name="paid_amount" sum="Totale"/>
+                                    <field name="amount" sum="Totale"/>
+                                    <field name="period"/>
+                                    <field name="date_due"/>
+                                    <field name="fiscal_year" column_invisible="parent.cycle != 'active'"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="payment_id"/>
+                                    <field name="transfer_move_id"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_search" model="ir.ui.view">
+        <field name="name">abc.withholding.search</field>
+        <field name="model">abc.withholding</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="move_id"/>
+                <field name="tributo_code"/>
+                <field name="reason"/>
+                <filter name="matured" string="Maturate" domain="[('state', '=', 'matured')]"/>
+                <filter name="due" string="Dovute" domain="[('state', '=', 'due')]"/>
+                <filter name="paid" string="Versate" domain="[('state', '=', 'paid')]"/>
+                <filter name="suffered" string="Subite" domain="[('state', '=', 'suffered')]"/>
+                <filter name="certified" string="Certificate" domain="[('state', '=', 'certified')]"/>
+                <filter name="open" string="Da pagare / incassare" domain="[('residual_amount', '!=', 0)]"/>
+                <separator/>
+                <filter name="xml_mismatch" string="Differenza con XML" domain="[('xml_mismatch', '=', True)]"/>
+                <filter name="contribution" string="Contributi previdenziali" domain="[('is_contribution', '=', True)]"/>
+                <separator/>
+                <filter name="invoice_date" string="Data fattura" date="invoice_date"/>
+                <group>
+                    <filter name="group_partner" string="Fornitore / Cliente" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_tributo" string="Codice tributo" context="{'group_by': 'tributo_code'}"/>
+                    <filter name="group_state" string="Stato" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Mese fattura" context="{'group_by': 'invoice_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_pivot" model="ir.ui.view">
+        <field name="name">abc.withholding.pivot</field>
+        <field name="model">abc.withholding</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="partner_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_abc_wh_passive" model="ir.actions.act_window">
+        <field name="name">Ritenute su fatture fornitori</field>
+        <field name="res_model">abc.withholding</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="domain">[('cycle', '=', 'passive')]</field>
+        <field name="context">{'default_cycle': 'passive'}</field>
+    </record>
+
+    <record id="action_abc_wh_passive_matured" model="ir.actions.act_window">
+        <field name="name">Maturate non pagate</field>
+        <field name="res_model">abc.withholding</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="domain">[('cycle', '=', 'passive'), ('state', 'in', ('matured', 'due')), ('residual_amount', '!=', 0)]</field>
+        <field name="context">{'default_cycle': 'passive'}</field>
+    </record>
+
+    <record id="action_abc_wh_active" model="ir.actions.act_window">
+        <field name="name">Ritenute su fatture emesse</field>
+        <field name="res_model">abc.withholding</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="domain">[('cycle', '=', 'active')]</field>
+        <field name="context">{'default_cycle': 'active'}</field>
+    </record>
+
+    <record id="action_abc_wh_active_matured" model="ir.actions.act_window">
+        <field name="name">Maturate non incassate</field>
+        <field name="res_model">abc.withholding</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="domain">[('cycle', '=', 'active'), ('state', 'in', ('matured', 'suffered')), ('residual_amount', '!=', 0)]</field>
+        <field name="context">{'default_cycle': 'active'}</field>
+    </record>
+
+    <!-- Tabella causale -> codice tributo -->
+    <record id="view_abc_wh_map_list" model="ir.ui.view">
+        <field name="name">abc.withholding.tributo.map.list</field>
+        <field name="model">abc.withholding.tributo.map</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="reason"/>
+                <field name="withholding_type"/>
+                <field name="tributo_code"/>
+                <field name="note"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_abc_wh_map" model="ir.actions.act_window">
+        <field name="name">Causali e codici tributo</field>
+        <field name="res_model">abc.withholding.tributo.map</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

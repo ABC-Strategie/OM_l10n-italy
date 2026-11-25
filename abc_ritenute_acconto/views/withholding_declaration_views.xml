@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_abc_wh_declaration_list" model="ir.ui.view">
+        <field name="name">abc.withholding.declaration.list</field>
+        <field name="model">abc.withholding.declaration</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="year"/>
+                <field name="declaration_type"/>
+                <field name="total_withheld_cu"/>
+                <field name="total_withheld_st"/>
+                <field name="sent_date" optional="show"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_declaration_form" model="ir.ui.view">
+        <field name="name">abc.withholding.declaration.form</field>
+        <field name="model">abc.withholding.declaration</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_compute" type="object" string="Calcola" class="btn-primary"
+                            invisible="state not in ('draft', 'checked')" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <button name="action_check" type="object" string="Controlla"
+                            invisible="state not in ('draft', 'checked')" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <button name="action_confirm" type="object" string="Conferma"
+                            invisible="state != 'checked'" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <button name="action_export_xlsx" type="object" string="Export Excel"/>
+                    <button name="action_print_cu" type="object" string="Stampa CU"/>
+                    <button name="action_send_cu" type="object" string="Invia CU ai percipienti"
+                            invisible="state not in ('confirmed', 'sent')" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <button name="action_generate_telematic" type="object" string="File telematici"
+                            invisible="state not in ('confirmed', 'sent')"/>
+                    <button name="action_mark_sent" type="object" string="Segna come trasmessa"
+                            invisible="state != 'confirmed'" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <button name="action_draft" type="object" string="Riporta in bozza"
+                            invisible="state == 'draft'" groups="abc_ritenute_acconto.group_wh_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-danger" role="alert" invisible="not check_errors">
+                        <strong>Errori bloccanti</strong>
+                        <field name="check_errors" nolabel="1"/>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not check_warnings">
+                        <strong>Avvisi</strong>
+                        <field name="check_warnings" nolabel="1"/>
+                    </div>
+                    <h1><field name="name" readonly="1"/></h1>
+                    <group>
+                        <group>
+                            <field name="year" readonly="state != 'draft'"/>
+                            <field name="declaration_type" readonly="state not in ('draft', 'checked')"/>
+                            <field name="separate_sending" readonly="state not in ('draft', 'checked')"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                        </group>
+                        <group>
+                            <field name="total_withheld_cu"/>
+                            <field name="total_withheld_st"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="CU per percipiente" name="cu">
+                            <field name="cu_ids" readonly="state not in ('draft', 'checked')">
+                                <list>
+                                    <field name="partner_id"/>
+                                    <field name="cu_type"/>
+                                    <field name="total_gross" sum="Totale"/>
+                                    <field name="total_withheld" sum="Totale"/>
+                                    <field name="sent"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="770 - quadro ST" name="st">
+                            <field name="st_ids" readonly="state not in ('draft', 'checked')">
+                                <list editable="bottom">
+                                    <field name="period"/>
+                                    <field name="tributo_code"/>
+                                    <field name="withheld" sum="Totale"/>
+                                    <field name="paid" sum="Totale"/>
+                                    <field name="interest" sum="Totale"/>
+                                    <field name="penalty" sum="Totale"/>
+                                    <field name="late"/>
+                                    <field name="payment_date"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Trasmissione" name="sending">
+                            <group>
+                                <group>
+                                    <field name="protocol_cu"/>
+                                    <field name="protocol_770"/>
+                                    <field name="sent_date"/>
+                                </group>
+                                <group>
+                                    <field name="receipt_cu" filename="receipt_cu_name"/>
+                                    <field name="receipt_cu_name" invisible="1"/>
+                                    <field name="receipt_770" filename="receipt_770_name"/>
+                                    <field name="receipt_770_name" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_cu_form" model="ir.ui.view">
+        <field name="name">abc.withholding.cu.form</field>
+        <field name="model">abc.withholding.cu</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <h1><field name="name" readonly="1"/></h1>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="cu_type"/>
+                            <field name="protocol_to_replace" invisible="cu_type == 'ordinary'"/>
+                        </group>
+                        <group>
+                            <field name="social_contrib"/>
+                            <field name="total_gross"/>
+                            <field name="total_withheld"/>
+                            <field name="sent"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <list editable="bottom">
+                            <field name="reason"/>
+                            <field name="gross" sum="Totale"/>
+                            <field name="not_subject" sum="Totale"/>
+                            <field name="not_subject_code"/>
+                            <field name="taxable" sum="Totale"/>
+                            <field name="withheld_advance" sum="Totale"/>
+                            <field name="withheld_final" sum="Totale"/>
+                            <field name="withheld_suspended" sum="Totale"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_abc_wh_declaration" model="ir.actions.act_window">
+        <field name="name">CU e 770</field>
+        <field name="res_model">abc.withholding.declaration</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

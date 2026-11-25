@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Due menu separati per ciclo (D52), sotto Contabilita' -->
+    <menuitem id="menu_wh_passive_root" name="Ritenute passive" parent="account.menu_finance"
+              sequence="40" groups="abc_ritenute_acconto.group_wh_user"/>
+    <menuitem id="menu_wh_passive_dashboard" name="Cruscotto" parent="menu_wh_passive_root"
+              action="action_server_dashboard_passive" sequence="1"/>
+    <menuitem id="menu_wh_passive_invoices" name="Ritenute su fatture" parent="menu_wh_passive_root"
+              action="action_abc_wh_passive" sequence="10"/>
+    <menuitem id="menu_wh_passive_matured" name="Maturate non pagate" parent="menu_wh_passive_root"
+              action="action_abc_wh_passive_matured" sequence="20"/>
+    <menuitem id="menu_wh_passive_due" name="Scadenzario dovute" parent="menu_wh_passive_root"
+              action="action_abc_wh_line_due" sequence="30"/>
+    <menuitem id="menu_wh_passive_paid" name="Versate" parent="menu_wh_passive_root"
+              action="action_abc_wh_line_paid" sequence="40"/>
+    <menuitem id="menu_wh_passive_payment_wizard" name="Prepara versamento F24" parent="menu_wh_passive_root"
+              action="action_abc_wh_payment_wizard" sequence="50" groups="abc_ritenute_acconto.group_wh_manager"/>
+    <menuitem id="menu_wh_passive_payments" name="Versamenti F24" parent="menu_wh_passive_root"
+              action="action_abc_wh_payment" sequence="60"/>
+    <menuitem id="menu_wh_passive_deadlines" name="Scadenze e promemoria" parent="menu_wh_passive_root"
+              action="action_abc_wh_deadline" sequence="70"/>
+    <menuitem id="menu_wh_passive_declaration" name="CU e 770" parent="menu_wh_passive_root"
+              action="action_abc_wh_declaration" sequence="80"/>
+
+    <menuitem id="menu_wh_active_root" name="Ritenute attive" parent="account.menu_finance"
+              sequence="41" groups="abc_ritenute_acconto.group_wh_user"/>
+    <menuitem id="menu_wh_active_dashboard" name="Cruscotto" parent="menu_wh_active_root"
+              action="action_server_dashboard_active" sequence="1"/>
+    <menuitem id="menu_wh_active_invoices" name="Ritenute su fatture emesse" parent="menu_wh_active_root"
+              action="action_abc_wh_active" sequence="10"/>
+    <menuitem id="menu_wh_active_matured" name="Maturate non incassate" parent="menu_wh_active_root"
+              action="action_abc_wh_active_matured" sequence="20"/>
+    <menuitem id="menu_wh_active_credit_year" name="Credito per anno" parent="menu_wh_active_root"
+              action="action_abc_wh_line_active" sequence="30"/>
+    <menuitem id="menu_wh_active_cu" name="Controllo CU" parent="menu_wh_active_root"
+              action="action_abc_wh_cu_received" sequence="40"/>
+    <menuitem id="menu_wh_active_cu_generate" name="Genera controlli CU anno scorso" parent="menu_wh_active_root"
+              action="action_server_cu_received_generate" sequence="45" groups="abc_ritenute_acconto.group_wh_manager"/>
+    <menuitem id="menu_wh_active_deduct" name="Scomputo in dichiarazione" parent="menu_wh_active_root"
+              action="action_abc_wh_deduct_wizard" sequence="50" groups="abc_ritenute_acconto.group_wh_manager"/>
+    <menuitem id="menu_wh_active_deducted" name="Scomputate" parent="menu_wh_active_root"
+              action="action_abc_wh_line_deducted" sequence="60"/>
+    <menuitem id="menu_wh_active_credit" name="Eccedenze e utilizzi" parent="menu_wh_active_root"
+              action="action_abc_wh_credit" sequence="70"/>
+
+    <menuitem id="menu_wh_config" name="Ritenute" parent="account.menu_finance_configuration"
+              sequence="90" groups="abc_ritenute_acconto.group_wh_manager"/>
+    <menuitem id="menu_wh_config_taxes" name="Configura imposte ritenuta" parent="menu_wh_config"
+              action="action_abc_wh_tax_config_wizard" sequence="5"/>
+    <menuitem id="menu_wh_config_map" name="Causali e codici tributo" parent="menu_wh_config"
+              action="action_abc_wh_map" sequence="10"/>
+    <menuitem id="menu_wh_config_rebuild" name="Ricostruisci storico" parent="menu_wh_config"
+              action="action_abc_wh_rebuild_wizard" sequence="20"/>
+</odoo>

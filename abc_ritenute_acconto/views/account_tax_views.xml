@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_tax_form_abc_wh" model="ir.ui.view">
+        <field name="name">account.tax.form.abc.withholding</field>
+        <field name="model">account.tax</field>
+        <field name="inherit_id" ref="account.view_tax_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Registro ritenute" name="abc_withholding" invisible="not l10n_it_withholding_type">
+                    <group>
+                        <group>
+                            <field name="l10n_it_withholding_type" readonly="1"/>
+                            <field name="l10n_it_withholding_reason" readonly="1"/>
+                            <field name="abc_wh_on_partner"/>
+                            <field name="abc_wh_tributo_code"/>
+                            <field name="abc_wh_final"/>
+                        </group>
+                        <group>
+                            <div class="text-muted" colspan="2">
+                                Con "Ritenuta sul conto del fornitore / cliente" la fattura non usa conti d'appoggio:
+                                il debito verso il fornitore resta al lordo. Al pagamento il modulo registra nel registro
+                                varie lo storno della ritenuta verso il conto indicato nella ripartizione dell'imposta
+                                (es. 260200 Debiti per ritenute da versare, 263000 Debiti previdenziali, 160900 Crediti
+                                per ritenute subite). L'esigibilita' deve essere "in base alla fattura".
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

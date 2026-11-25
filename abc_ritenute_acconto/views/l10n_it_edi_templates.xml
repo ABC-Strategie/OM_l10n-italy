@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Fattura elettronica emessa: in DatiPagamento solo le righe di scadenza (netto da incassare).
+         La riga ritenuta sul conto del cliente non e' un importo da pagare. -->
+    <template id="abc_wh_fatturapa_export" inherit_id="l10n_it_edi.account_invoice_it_FatturaPA_export">
+        <xpath expr="//t[@t-set='payments']" position="attributes">
+            <attribute name="t-value">record.line_ids.filtered(lambda line: line.display_type == 'payment_term')</attribute>
+        </xpath>
+    </template>
+</odoo>

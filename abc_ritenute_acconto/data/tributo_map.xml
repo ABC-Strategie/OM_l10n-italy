@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tabella causale -> codice tributo confermata (N3). Modificabile da Configurazione. -->
+<odoo noupdate="1">
+    <record id="map_a" model="abc.withholding.tributo.map">
+        <field name="reason">A</field>
+        <field name="tributo_code">1040</field>
+        <field name="note">Lavoro autonomo abituale (professionisti)</field>
+    </record>
+    <record id="map_m" model="abc.withholding.tributo.map">
+        <field name="reason">M</field>
+        <field name="tributo_code">1040</field>
+        <field name="note">Prestazioni di lavoro autonomo occasionale</field>
+    </record>
+    <record id="map_q" model="abc.withholding.tributo.map">
+        <field name="reason">Q</field>
+        <field name="tributo_code">1038</field>
+        <field name="note">Provvigioni agente monomandatario</field>
+    </record>
+    <record id="map_r" model="abc.withholding.tributo.map">
+        <field name="reason">R</field>
+        <field name="tributo_code">1038</field>
+        <field name="note">Provvigioni agente plurimandatario</field>
+    </record>
+</odoo>

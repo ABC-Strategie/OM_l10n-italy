@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_abc_wh_deduct_wizard_form" model="ir.ui.view">
+        <field name="name">abc.withholding.deduct.wizard.form</field>
+        <field name="model">abc.withholding.deduct.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Scomputo ritenute subite">
+                <div class="alert alert-info" role="alert">
+                    Segna le ritenute come usate in dichiarazione. Nessuna scrittura contabile:
+                    lo scomputo si registra in sede di dichiarazione.
+                </div>
+                <group>
+                    <group>
+                        <field name="fiscal_year"/>
+                        <field name="include_uncertified"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <group>
+                        <field name="line_count"/>
+                        <field name="amount"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_deduct" type="object" string="Scomputa" class="btn-primary"/>
+                    <button special="cancel" string="Annulla"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_abc_wh_deduct_wizard" model="ir.actions.act_window">
+        <field name="name">Scomputo in dichiarazione</field>
+        <field name="res_model">abc.withholding.deduct.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

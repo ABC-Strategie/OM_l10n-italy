@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="mail_template_cu_send" model="mail.template">
+        <field name="name">Ritenute: invio CU al percipiente</field>
+        <field name="model_id" ref="model_abc_withholding_cu"/>
+        <field name="subject">Certificazione Unica {{ (object.year or 0) + 1 }} - {{ object.company_id.name }}</field>
+        <field name="email_from">{{ user.email_formatted }}</field>
+        <field name="email_to">{{ object.partner_id.abc_wh_cu_email or object.partner_id.email }}</field>
+        <field name="report_template_ids" eval="[(4, ref('abc_ritenute_acconto.action_report_cu'))]"/>
+        <field name="body_html" type="html">
+<div>
+    <p>Gentile <t t-out="object.partner_id.name"/>,</p>
+    <p>in allegato la Certificazione Unica relativa ai compensi pagati nel <t t-out="object.year"/>
+        da <t t-out="object.company_id.name"/>.</p>
+    <p>Cordiali saluti,<br/><t t-out="user.name"/></p>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_cu_reminder" model="mail.template">
+        <field name="name">Ritenute: sollecito CU al cliente</field>
+        <field name="model_id" ref="model_abc_withholding_cu_received"/>
+        <field name="subject">Richiesta Certificazione Unica {{ (object.year or 0) + 1 }} - {{ object.company_id.name }}</field>
+        <field name="email_from">{{ user.email_formatted }}</field>
+        <field name="partner_to">{{ object.partner_id.id }}</field>
+        <field name="body_html" type="html">
+<div>
+    <p>Spettabile <t t-out="object.partner_id.name"/>,</p>
+    <p>per le fatture che vi abbiamo emesso e che avete pagato nel <t t-out="object.year"/> risultano ritenute
+        d'acconto per <t t-out="format_amount(object.registered_amount, object.currency_id)"/>.</p>
+    <p t-if="object.state == 'missing'">Non abbiamo ancora ricevuto la relativa Certificazione Unica: vi chiediamo
+        cortesemente di inviarcela.</p>
+    <p t-if="object.state == 'difference'">La Certificazione Unica ricevuta riporta ritenute per
+        <t t-out="format_amount(object.certified_amount, object.currency_id)"/>: vi chiediamo di verificare e,
+        se necessario, di inviarci una CU sostitutiva.</p>
+    <p>Cordiali saluti,<br/><t t-out="user.name"/></p>
+</div>
+        </field>
+    </record>
+</odoo>

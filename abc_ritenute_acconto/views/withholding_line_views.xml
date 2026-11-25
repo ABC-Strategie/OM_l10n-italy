@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Quote: una per pagamento o incasso. E' lo scadenzario (D26, D27). -->
+    <record id="view_abc_wh_line_list" model="ir.ui.view">
+        <field name="name">abc.withholding.line.list</field>
+        <field name="model">abc.withholding.line</field>
+        <field name="arch" type="xml">
+            <list create="0" decoration-danger="is_overdue" decoration-muted="state in ('offset', 'not_operated')">
+                <field name="partner_id"/>
+                <field name="partner_fiscalcode" optional="hide"/>
+                <field name="move_id"/>
+                <field name="invoice_ref" optional="hide"/>
+                <field name="invoice_date" optional="show"/>
+                <field name="kind" optional="hide"/>
+                <field name="payment_date"/>
+                <field name="counterpart_move_id" optional="hide"/>
+                <field name="paid_amount" optional="show" sum="Totale"/>
+                <field name="withholding_type" optional="hide"/>
+                <field name="reason" optional="hide"/>
+                <field name="tributo_code" optional="show"/>
+                <field name="rate" optional="hide"/>
+                <field name="base_amount" optional="hide" sum="Totale"/>
+                <field name="amount" sum="Totale"/>
+                <field name="period" optional="show"/>
+                <field name="date_due" optional="show" column_invisible="context.get('default_cycle') == 'active'"/>
+                <field name="days_to_due" optional="show" column_invisible="context.get('default_cycle') == 'active'"/>
+                <field name="fiscal_year" optional="show" column_invisible="context.get('default_cycle') == 'passive'"/>
+                <field name="payment_id" optional="show" column_invisible="context.get('default_cycle') == 'active'"/>
+                <field name="payment_doc_date" optional="hide"/>
+                <field name="cu_received_id" optional="hide" column_invisible="context.get('default_cycle') == 'passive'"/>
+                <field name="transfer_move_id" optional="hide"/>
+                <field name="is_overdue" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-warning="state in ('due', 'suffered')"
+                       decoration-success="state in ('paid', 'certified', 'deducted')"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_line_form" model="ir.ui.view">
+        <field name="name">abc.withholding.line.form</field>
+        <field name="model">abc.withholding.line</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_move" type="object" class="oe_stat_button" icon="fa-file-text-o" string="Fattura"/>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not transfer_missing">
+                        Scrittura della ritenuta non creata: configurare il registro varie delle ritenute nell'azienda.
+                    </div>
+                    <group>
+                        <group string="Pagamento / incasso">
+                            <field name="withholding_id"/>
+                            <field name="cycle"/>
+                            <field name="partner_id"/>
+                            <field name="move_id"/>
+                            <field name="kind"/>
+                            <field name="counterpart_move_id"/>
+                            <field name="payment_date"/>
+                            <field name="paid_amount"/>
+                            <field name="historical"/>
+                        </group>
+                        <group string="Quota">
+                            <field name="tributo_code"/>
+                            <field name="reason"/>
+                            <field name="base_amount"/>
+                            <field name="n1_amount"/>
+                            <field name="amount"/>
+                            <field name="period"/>
+                            <field name="date_due" invisible="cycle != 'passive'"/>
+                            <field name="fiscal_year" invisible="cycle != 'active'"/>
+                            <field name="state"/>
+                            <field name="payment_id" invisible="cycle != 'passive'"/>
+                            <field name="cu_received_id" invisible="cycle != 'active'"/>
+                            <field name="deduction_year" invisible="cycle != 'active'"/>
+                            <field name="transfer_move_id"/>
+                            <field name="transfer_missing" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_line_search" model="ir.ui.view">
+        <field name="name">abc.withholding.line.search</field>
+        <field name="model">abc.withholding.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="move_id"/>
+                <field name="tributo_code"/>
+                <field name="period"/>
+                <field name="payment_id"/>
+                <filter name="due" string="Dovute" domain="[('state', '=', 'due')]"/>
+                <filter name="overdue" string="Scadute non versate" domain="[('is_overdue', '=', True)]"/>
+                <filter name="due_15" string="In scadenza nei prossimi 15 giorni"
+                        domain="[('state', '=', 'due'), ('date_due', '&gt;=', context_today().strftime('%Y-%m-%d')), ('date_due', '&lt;=', (context_today() + relativedelta(days=15)).strftime('%Y-%m-%d'))]"/>
+                <filter name="paid" string="Versate" domain="[('state', '=', 'paid')]"/>
+                <separator/>
+                <filter name="suffered" string="Subite" domain="[('state', '=', 'suffered')]"/>
+                <filter name="certified" string="Certificate" domain="[('state', '=', 'certified')]"/>
+                <filter name="deducted" string="Scomputate" domain="[('state', '=', 'deducted')]"/>
+                <filter name="not_operated" string="Non operate" domain="[('state', '=', 'not_operated')]"/>
+                <separator/>
+                <filter name="no_contribution" string="Senza contributi previdenziali" domain="[('is_contribution', '=', False)]"/>
+                <filter name="historical" string="Da storico" domain="[('historical', '=', True)]"/>
+                <separator/>
+                <filter name="payment_date" string="Data pagamento" date="payment_date"/>
+                <filter name="date_due_filter" string="Scadenza" date="date_due"/>
+                <group>
+                    <filter name="group_period" string="Mese di competenza" context="{'group_by': 'period'}"/>
+                    <filter name="group_due" string="Scadenza" context="{'group_by': 'date_due'}"/>
+                    <filter name="group_tributo" string="Codice tributo" context="{'group_by': 'tributo_code'}"/>
+                    <filter name="group_partner" string="Fornitore / Cliente" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="Stato" context="{'group_by': 'state'}"/>
+                    <filter name="group_year" string="Anno del pagamento" context="{'group_by': 'payment_year'}"/>
+                    <filter name="group_fiscal_year" string="Anno fiscale" context="{'group_by': 'fiscal_year'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_line_pivot" model="ir.ui.view">
+        <field name="name">abc.withholding.line.pivot</field>
+        <field name="model">abc.withholding.line</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="period" type="row"/>
+                <field name="tributo_code" type="col"/>
+                <field name="amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_line_graph" model="ir.ui.view">
+        <field name="name">abc.withholding.line.graph</field>
+        <field name="model">abc.withholding.line</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="period"/>
+                <field name="amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_abc_wh_line_calendar" model="ir.ui.view">
+        <field name="name">abc.withholding.line.calendar</field>
+        <field name="model">abc.withholding.line</field>
+        <field name="arch" type="xml">
+            <calendar date_start="date_due" mode="month" color="partner_id" create="0" quick_create="0">
+                <field name="partner_id"/>
+                <field name="tributo_code"/>
+                <field name="amount"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="action_abc_wh_line_due" model="ir.actions.act_window">
+        <field name="name">Scadenzario ritenute da versare</field>
+        <field name="res_model">abc.withholding.line</field>
+        <field name="view_mode">list,pivot,graph,calendar,form</field>
+        <field name="domain">[('cycle', '=', 'passive'), ('kind', '=', 'payment')]</field>
+        <field name="context">{'default_cycle': 'passive', 'search_default_due': 1, 'search_default_group_due': 1}</field>
+    </record>
+
+    <record id="action_abc_wh_line_paid" model="ir.actions.act_window">
+        <field name="name">Ritenute versate</field>
+        <field name="res_model">abc.withholding.line</field>
+        <field name="view_mode">list,pivot,graph,form</field>
+        <field name="domain">[('cycle', '=', 'passive'), ('state', '=', 'paid')]</field>
+        <field name="context">{'default_cycle': 'passive', 'search_default_group_period': 1}</field>
+    </record>
+
+    <record id="action_abc_wh_line_active" model="ir.actions.act_window">
+        <field name="name">Credito per anno</field>
+        <field name="res_model">abc.withholding.line</field>
+        <field name="view_mode">list,pivot,graph,form</field>
+        <field name="domain">[('cycle', '=', 'active'), ('kind', '=', 'payment')]</field>
+        <field name="context">{'default_cycle': 'active', 'search_default_group_fiscal_year': 1}</field>
+    </record>
+
+    <record id="action_abc_wh_line_deducted" model="ir.actions.act_window">
+        <field name="name">Ritenute scomputate</field>
+        <field name="res_model">abc.withholding.line</field>
+        <field name="view_mode">list,pivot,form</field>
+        <field name="domain">[('cycle', '=', 'active'), ('state', '=', 'deducted')]</field>
+        <field name="context">{'default_cycle': 'active', 'search_default_group_fiscal_year': 1}</field>
+    </record>
+</odoo>

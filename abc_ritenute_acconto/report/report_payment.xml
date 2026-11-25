@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_payment">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h3>Versamento ritenute <t t-out="o.name"/></h3>
+                        <p>
+                            Data versamento: <t t-out="o.date" t-options="{'widget': 'date'}"/>
+                            <t t-if="o.period"> - mese di riferimento <t t-out="o.period"/></t>
+                            <t t-if="o.is_late"> - <strong>con ravvedimento</strong></t>
+                        </p>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Codice tributo</th>
+                                    <th>Anno</th>
+                                    <th class="text-end">Ritenute</th>
+                                    <th class="text-end">Interessi</th>
+                                    <th class="text-end">Sanzioni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.tribute_ids" t-as="t">
+                                    <td><t t-out="t.tributo_code"/></td>
+                                    <td><t t-out="t.year"/></td>
+                                    <td class="text-end"><t t-out="t.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><t t-out="t.interest" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><t t-out="t.penalty" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4"><strong>Totale a debito</strong></td>
+                                    <td class="text-end"><strong><t t-out="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <t t-if="o.compensation_ids">
+                            <h5>Compensazioni</h5>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Credito</th>
+                                        <th>Codice tributo</th>
+                                        <th>Anno</th>
+                                        <th class="text-end">Importo a credito</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.compensation_ids" t-as="c">
+                                        <td><t t-out="c.account_id.display_name"/></td>
+                                        <td><t t-out="c.tributo_code"/></td>
+                                        <td><t t-if="c.year" t-out="c.year"/></td>
+                                        <td class="text-end"><t t-out="c.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                        <p><strong>Saldo F24 da pagare: <t t-out="o.amount_to_pay" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong></p>
+                        <h5>Fatture che compongono il versamento</h5>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Fornitore</th>
+                                    <th>Codice fiscale</th>
+                                    <th>Fattura</th>
+                                    <th>Pagamento</th>
+                                    <th>Scadenza</th>
+                                    <th>Tributo</th>
+                                    <th class="text-end">Imponibile</th>
+                                    <th class="text-end">Ritenuta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids.sorted(lambda l: (l.tributo_code or '', l.payment_date))" t-as="l">
+                                    <td><t t-out="l.partner_id.name"/></td>
+                                    <td><t t-out="l.partner_fiscalcode"/></td>
+                                    <td><t t-out="l.move_id.name"/></td>
+                                    <td><t t-out="l.payment_date" t-options="{'widget': 'date'}"/></td>
+                                    <td><t t-out="l.date_due" t-options="{'widget': 'date'}"/></td>
+                                    <td><t t-out="l.tributo_code"/></td>
+                                    <td class="text-end"><t t-out="l.base_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    <td class="text-end"><t t-out="l.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_register">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-set="company" t-value="docs[:1].company_id or res_company"/>
+                <div class="page">
+                    <h3>Registro ritenute d'acconto</h3>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Ciclo</th>
+                                <th>Fornitore / Cliente</th>
+                                <th>Fattura</th>
+                                <th>Data fattura</th>
+                                <th>Pagamento</th>
+                                <th>Mese</th>
+                                <th>Scadenza</th>
+                                <th>Tributo</th>
+                                <th>Stato</th>
+                                <th class="text-end">Ritenuta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="docs" t-as="l">
+                                <td><t t-out="l.cycle == 'passive' and 'Passivo' or 'Attivo'"/></td>
+                                <td><t t-out="l.partner_id.name"/></td>
+                                <td><t t-out="l.move_id.name"/></td>
+                                <td><t t-out="l.invoice_date" t-options="{'widget': 'date'}"/></td>
+                                <td><t t-out="l.payment_date" t-options="{'widget': 'date'}"/></td>
+                                <td><t t-out="l.period"/></td>
+                                <td><t t-out="l.date_due" t-options="{'widget': 'date'}"/></td>
+                                <td><t t-out="l.tributo_code"/></td>
+                                <td><t t-out="l.state_label"/></td>
+                                <td class="text-end"><t t-out="l.amount" t-options="{'widget': 'monetary', 'display_currency': l.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td colspan="9"><strong>Totale</strong></td>
+                                <td class="text-end"><strong><t t-out="sum(docs.mapped('amount'))" t-options="{'widget': 'monetary', 'display_currency': company.currency_id}"/></strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

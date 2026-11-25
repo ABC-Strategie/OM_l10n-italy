@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_company_form_abc_wh" model="ir.ui.view">
+        <field name="name">res.company.form.abc.withholding</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Ritenute d'acconto" name="abc_withholding" groups="abc_ritenute_acconto.group_wh_manager">
+                    <group>
+                        <group string="Contabilizzazione">
+                            <field name="abc_wh_journal_id"/>
+                            <field name="abc_wh_start_date"/>
+                        </group>
+                        <group string="Versamenti e avvisi">
+                            <field name="abc_wh_threshold"/>
+                            <field name="abc_wh_reminder_days"/>
+                            <field name="abc_wh_responsible_ids" widget="many2many_tags"/>
+                            <field name="abc_wh_penalty_code"/>
+                            <field name="abc_wh_interest_code"/>
+                            <field name="abc_wh_f24_journal_id"/>
+                            <field name="abc_wh_penalty_account_id"/>
+                            <field name="abc_wh_interest_account_id"/>
+                        </group>
+                        <group string="Ritenute subite">
+                            <field name="abc_wh_income_type"/>
+                        </group>
+                        <group string="CU e 770">
+                            <field name="abc_wh_signer_name"/>
+                            <field name="abc_wh_signer_fiscalcode"/>
+                            <field name="abc_wh_signer_role_code"/>
+                            <field name="abc_wh_ateco_code"/>
+                            <field name="abc_wh_intermediary_fiscalcode"/>
+                            <field name="abc_wh_intermediary_caf"/>
+                            <field name="abc_wh_intermediary_commit_date"/>
+                            <field name="abc_wh_cu_forfettario_code"/>
+                            <field name="abc_wh_cu_n1_code"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
